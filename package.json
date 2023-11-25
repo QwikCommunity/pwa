@@ -2,23 +2,23 @@
   "name": "@qwikdev/pwa",
   "version": "0.0.1",
   "description": "Create a reusable Qwik component library",
-  "main": "./lib/index.qwik.mjs",
-  "qwik": "./lib/index.qwik.mjs",
+  "main": "./dist/index.qwik.mjs",
+  "qwik": "./dist/index.qwik.mjs",
   "types": "./lib-types/index.d.ts",
   "exports": {
     ".": {
-      "import": "./lib/index.qwik.mjs",
-      "require": "./lib/index.qwik.cjs",
+      "import": "./dist/index.qwik.mjs",
+      "require": "./dist/index.qwik.cjs",
       "types": "./lib-types/index.d.ts"
     },
     "./sw": {
-      "import": "./lib/sw.qwik.mjs",
-      "require": "./lib/sw.qwik.cjs",
+      "import": "./dist/sw.qwik.mjs",
+      "require": "./dist/sw.qwik.cjs",
       "types": "./lib-types/sw.d.ts"
     }
   },
   "files": [
-    "lib",
+    "dist",
     "lib-types"
   ],
   "engines": {

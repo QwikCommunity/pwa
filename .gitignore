@@ -6,7 +6,6 @@ server
 
 # Development
 node_modules
-
 # Cache
 .cache
 .mf

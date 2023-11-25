@@ -8,7 +8,7 @@ import {
 import { NavigationRoute, registerRoute } from "workbox-routing";
 
 export const assets = [...publicDirAssets, ...emittedAssets];
-export { routes }
+export { routes };
 
 function urlsToEntries(urls: string[], hash: string): PrecacheEntry[] {
   const matcher = /^build\/q-([a-f0-9]{8})\./;
@@ -22,14 +22,19 @@ function urlsToEntries(urls: string[], hash: string): PrecacheEntry[] {
 }
 
 export function setupPwa() {
+  const noParamRoutes = routes.filter((r) => !r.hasParams);
+  console.log(noParamRoutes);
   cleanupOutdatedCaches();
 
   precacheAndRoute(
-    urlsToEntries([...routes.map((r) => r.pathname), ...assets], manifestHash)
+    urlsToEntries(
+      [...noParamRoutes.map((r) => r.pathname), ...assets],
+      manifestHash
+    )
   );
 
   // should be registered after precacheAndRoute
-  for (const route of routes) {
+  for (const route of noParamRoutes) {
     registerRoute(
       new NavigationRoute(createHandlerBoundToURL(route.pathname), {
         allowlist: [route.pattern],
@@ -37,9 +42,9 @@ export function setupPwa() {
     );
   }
 
-//   addEventListener("install", () => self.skipWaiting());
+  //   addEventListener("install", () => self.skipWaiting());
 
-//   addEventListener("activate", () => self.clients.claim());
+  //   addEventListener("activate", () => self.clients.claim());
 
   const base = "/build/"; // temp, it should be dynamic based on the build
   const qprefetchEvent = new MessageEvent<ServiceWorkerMessage>("message", {
@@ -58,7 +63,11 @@ declare const appBundles: AppBundle[];
 
 declare const publicDirAssets: string[];
 declare const emittedAssets: string[];
-declare const routes: { pathname: string; pattern: RegExp }[];
+declare const routes: {
+  pathname: string;
+  pattern: RegExp;
+  hasParams: boolean;
+}[];
 declare const manifestHash: string;
 
 declare const self: ServiceWorkerGlobalScope;
