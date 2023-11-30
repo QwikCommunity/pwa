@@ -49,15 +49,12 @@ export function qwikPwa(): PluginOption {
       },
     },
     {
-      name: "qwik-pwa",
+      name: "qwik-pwa-client",
       enforce: "post",
-      generateBundle(_, _bundle) {
-        bundle = _bundle;
-      },
-      closeBundle: {
+      writeBundle: {
         sequential: true,
         order: "post",
-        async handler() {
+        async handler(_, bundle) {
           if (target !== "client") {
             return;
           }
@@ -68,7 +65,6 @@ export function qwikPwa(): PluginOption {
           );
 
           const routes = qwikCityPlugin!.api.getRoutes();
-          console.log(qwikCityPlugin!.api.getRoutes());
           const swCode = await fs.readFile(swClientDistPath, "utf-8");
           const swCodeUpdate = `
         const publicDirAssets = ${JSON.stringify(publicDirAssets)};

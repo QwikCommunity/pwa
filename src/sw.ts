@@ -4,8 +4,13 @@ import {
   createHandlerBoundToURL,
   precacheAndRoute,
 } from "workbox-precaching";
+import { StaleWhileRevalidate, NetworkFirst } from "workbox-strategies";
 
-import { NavigationRoute, registerRoute } from "workbox-routing";
+import {
+  NavigationRoute,
+  registerRoute,
+  setDefaultHandler,
+} from "workbox-routing";
 
 export const assets = [...publicDirAssets, ...emittedAssets];
 export { routes };
@@ -23,7 +28,7 @@ function urlsToEntries(urls: string[], hash: string): PrecacheEntry[] {
 
 export function setupPwa() {
   const noParamRoutes = routes.filter((r) => !r.hasParams);
-  console.log(noParamRoutes);
+  const paramRoutes = routes.filter((r) => r.hasParams);
   cleanupOutdatedCaches();
 
   precacheAndRoute(
@@ -33,7 +38,9 @@ export function setupPwa() {
     )
   );
 
-  // should be registered after precacheAndRoute
+  // the rest of requests (like /api/) should be handled by network first (https://github.com/BuilderIO/qwik/issues/5148#issuecomment-1814692124)
+  setDefaultHandler(new NetworkFirst());
+
   for (const route of noParamRoutes) {
     registerRoute(
       new NavigationRoute(createHandlerBoundToURL(route.pathname), {
@@ -41,12 +48,22 @@ export function setupPwa() {
       })
     );
   }
+  for (const route of paramRoutes) {
+    registerRoute(
+      new NavigationRoute(
+        async (options) => {
+          precacheAndRoute(urlsToEntries([options.url.pathname], manifestHash));
+          return createHandlerBoundToURL(options.url.pathname)(options);
+        },
+        {
+          allowlist: [route.pattern],
+        }
+      ),
+      new StaleWhileRevalidate()
+    );
+  }
 
-  //   addEventListener("install", () => self.skipWaiting());
-
-  //   addEventListener("activate", () => self.clients.claim());
-
-  const base = "/build/"; // temp, it should be dynamic based on the build
+  const base = "/build/"; // TODO: it should be dynamic based on the build
   const qprefetchEvent = new MessageEvent<ServiceWorkerMessage>("message", {
     data: {
       type: "qprefetch",
