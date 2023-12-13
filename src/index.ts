@@ -1,4 +1,4 @@
-import type { PluginOption, Plugin } from "vite";
+import type { PluginOption } from "vite";
 import type {
   QwikBuildTarget,
   QwikVitePlugin,
@@ -8,18 +8,11 @@ import path from "node:path";
 import fs from "node:fs/promises";
 import fg from "fast-glob";
 
-const tempGenerateFunc: NonNullable<Plugin["generateBundle"]> =
-  (() => {}) satisfies Plugin["generateBundle"];
-type OutputBundle = Parameters<typeof tempGenerateFunc>[1];
-
 export function qwikPwa(): PluginOption {
   let qwikPlugin: QwikVitePlugin | null = null;
   let qwikCityPlugin: QwikCityPlugin | null = null;
   let publicDir: string | null = null;
   let target: QwikBuildTarget | null = null;
-
-  // make the type an argument of the generateBundle function
-  let bundle: OutputBundle;
 
   let clientOutDir: string;
   let basePathRelDir: string;
