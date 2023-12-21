@@ -19,7 +19,12 @@ export default defineConfig(() => {
       // (optional) enables debugging in workbox
       "process.env.NODE_ENV": JSON.stringify("development"),
     },
-    plugins: [qwikCity(), qwikVite(), qwikPwa()],
+    plugins: [
+      qwikCity(),
+      qwikVite(),
+      // The options are set by default
+      qwikPwa({ orientation: "portrait", icon: "./public/favicon.svg" }),
+    ],
   };
 });
 ```
