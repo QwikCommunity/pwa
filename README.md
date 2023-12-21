@@ -85,6 +85,10 @@ Just fetch the desired page or asset so it gets cached for later uses.
 fetch("/blog/how-to-use-qwik");
 ```
 
+### API Routes
+
+For API routes and any other routes that do not meet the conditions mentioned above, there's a [Network-First](https://developer.chrome.com/docs/workbox/modules/workbox-strategies/#network_first_network_falling_back_to_cach) handler.
+
 ## Manifest
 
 The plugin would generate all of the [adaptive](https://web.dev/articles/maskable-icon) icons needed for different devices with different ratios in `manifest.json` based on your main icon in the build process using [@vite-pwa/assets-generator](https://vite-pwa-org.netlify.app/assets-generator/api.html#api).
