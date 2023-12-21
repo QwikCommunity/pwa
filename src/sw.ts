@@ -2,7 +2,6 @@ import type { PrecacheEntry } from "workbox-precaching";
 import {
   cleanupOutdatedCaches,
   createHandlerBoundToURL,
-  precache,
   precacheAndRoute,
 } from "workbox-precaching";
 import { StaleWhileRevalidate, NetworkFirst } from "workbox-strategies";
@@ -51,21 +50,6 @@ export function setupPwa() {
   }
   for (const route of paramRoutes) {
     registerRoute(route.pattern, new StaleWhileRevalidate());
-    // registerRoute(
-    //   new NavigationRoute(
-    //     async (options) => {
-    //       precache(urlsToEntries([options.url.pathname], manifestHash));
-    //       // precacheAndRoute(urlsToEntries([options.url.pathname], manifestHash));
-    //       const result = createHandlerBoundToURL(options.url.pathname)(options);
-    //       console.log(result);
-    //       return result;
-    //     },
-    //     {
-    //       allowlist: [route.pattern],
-    //     }
-    //   ),
-    //   new StaleWhileRevalidate()
-    // );
   }
 
   const base = "/build/"; // TODO: it should be dynamic based on the build
