@@ -1,6 +1,6 @@
 # Qwik PWA 📱
 
-_Turn your Qwik Application into an offline compatible PWA (Progressive Web Application) using Workbox but without the hassle._
+Turn your Qwik Application into an offline compatible PWA (Progressive Web Application) using Workbox but without the hassle.
 
 ## Installation
 
