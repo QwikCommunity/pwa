@@ -62,7 +62,15 @@ export const RouterHead = component$(() => {
 
 Make sure you remove the `<link rel="icon" type="image/svg+xml" href="/favicon.svg" />` line in your router-head file.
 
+You will need to add `@qwilkdev/pwa/head` to your `tsconfig.json` file in the `compilerOptions.types` option.
+
 Now your application is PWA-friendly.
+
+```json
+{
+  "include": ["src/**/*", "src/routes/service-worker.ts", "@qwikdev/pwa/sw"]
+}
+```
 
 ## Precache
 

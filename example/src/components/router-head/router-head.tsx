@@ -2,7 +2,6 @@ import { useDocumentHead, useLocation } from "@builder.io/qwik-city";
 
 import { component$ } from "@builder.io/qwik";
 import { link, meta } from "virtual:qwik-pwa/head";
-// import iconsLinks from "@qwikdev/pwa/icons-entry";
 
 /**
  * The RouterHead component is placed inside of the document `<head>` element.
