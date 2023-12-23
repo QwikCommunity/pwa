@@ -47,11 +47,11 @@ addEventListener("activate", () => self.clients.claim());
 
 ```tsx
 // PWA compatible generated icons for different browsers
-import { link, head } from "virtual:qwik-pwa/head";
+import { link, meta } from "virtual:qwik-pwa/head";
 
 export const RouterHead = component$(() => {
     ...
-      {head.map((l) => (
+      {meta.map((l) => (
         <meta key={l.key} {...l} />
       ))}
       {link.map((l) => (
