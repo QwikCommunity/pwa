@@ -66,12 +66,6 @@ You will need to add `@qwilkdev/pwa/head` to your `tsconfig.json` file in the `c
 
 Now your application is PWA-friendly.
 
-```json
-{
-  "include": ["src/**/*", "src/routes/service-worker.ts", "@qwikdev/pwa/sw"]
-}
-```
-
 ## Precache
 
 > One feature of service workers is the ability to save a set of files to the cache when the service worker is installing. This is often referred to as "precaching", since you are caching content ahead of the service worker being used. [Chrome for Developers](https://developer.chrome.com/docs/workbox/modules/workbox-precaching/)
