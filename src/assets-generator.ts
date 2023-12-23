@@ -8,7 +8,6 @@ import { loadConfig } from "@vite-pwa/assets-generator/config";
 import { instructions } from "@vite-pwa/assets-generator/api/instructions";
 import { generateAssets } from "@vite-pwa/assets-generator/api/generate-assets";
 import { generateManifestIconsEntry } from "@vite-pwa/assets-generator/api/generate-manifest-icons-entry";
-import { version } from "../package.json";
 import { lstat, mkdir, readFile, writeFile } from "node:fs/promises";
 import { basename, dirname, relative, resolve } from "node:path";
 import type {
@@ -222,7 +221,7 @@ async function loadAssetsGeneratorContext(
     console.error(
       [
         "",
-        `Qwik PWA v${version}`,
+        `Qwik PWA v${ctx.version}`,
         "ERROR: No preset for assets generator found",
       ].join("\n"),
     );
@@ -235,7 +234,7 @@ async function loadAssetsGeneratorContext(
     console.error(
       [
         "",
-        `Qwik PWA v${version}`,
+        `Qwik PWA v${ctx.version}`,
         "ERROR: No image provided for assets generator",
       ].join("\n"),
     );
@@ -247,7 +246,7 @@ async function loadAssetsGeneratorContext(
       console.error(
         [
           "",
-          `Qwik PWA v${version}`,
+          `Qwik PWA v${ctx.version}`,
           "ERROR: No image provided for assets generator",
         ].join("\n"),
       );
@@ -257,7 +256,7 @@ async function loadAssetsGeneratorContext(
       console.error(
         [
           "",
-          `Qwik PWA v${version}`,
+          `Qwik PWA v${ctx.version}`,
           "ERROR: Only one image is supported for assets generator",
         ].join("\n"),
       );
