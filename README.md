@@ -23,7 +23,7 @@ export default defineConfig(() => {
       qwikCity(),
       qwikVite(),
       // The options are set by default
-      qwikPwa({ orientation: "portrait", icon: "./public/favicon.svg" }),
+      qwikPwa({ /* options */ }),
     ],
   };
 });
@@ -47,11 +47,14 @@ addEventListener("activate", () => self.clients.claim());
 
 ```tsx
 // PWA compatible generated icons for different browsers
-import iconsLinks from "@qwikdev/pwa/icons-entry";
+import { link, head } from "virtual:qwik-pwa/head";
 
 export const RouterHead = component$(() => {
     ...
-      {iconsLinks.map((l) => (
+      {head.map((l) => (
+        <meta key={l.key} {...l} />
+      ))}
+      {link.map((l) => (
         <link key={l.key} {...l} />
       ))}
     ...

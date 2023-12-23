@@ -11,20 +11,19 @@
       "require": "./dist/index.qwik.cjs",
       "types": "./lib-types/index.d.ts"
     },
+    "./head": {
+      "types": "./head.d.ts"
+    },
     "./sw": {
       "import": "./dist/sw.qwik.mjs",
       "require": "./dist/sw.qwik.cjs",
       "types": "./lib-types/sw.d.ts"
-    },
-    "./icons-entry": {
-      "import": "./dist/icons-entry.qwik.mjs",
-      "require": "./dist/icons-entry.qwik.cjs",
-      "types": "./lib-types/icons-entry.d.ts"
     }
   },
   "files": [
     "dist",
-    "lib-types"
+    "lib-types",
+    "*.d.ts"
   ],
   "engines": {
     "node": ">=15.0.0"

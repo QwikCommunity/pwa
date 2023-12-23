@@ -10,7 +10,17 @@ export default defineConfig(() => {
       // enables debugging in workbox
       "process.env.NODE_ENV": JSON.stringify("development"),
     },
-    plugins: [qwikCity(), qwikVite(), tsconfigPaths(), qwikPwa()],
+    plugins: [
+      qwikCity(),
+      qwikVite(),
+      tsconfigPaths(),
+      qwikPwa({
+        assets: {
+          includeWebManifest: 'manifest.json',
+          overrideManifestIcons: true,
+        }
+      })
+    ],
     preview: {
       headers: {
         "Cache-Control": "public, max-age=600",
