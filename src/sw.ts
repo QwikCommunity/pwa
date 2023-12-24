@@ -31,8 +31,8 @@ export function setupPwa() {
   precacheAndRoute(
     urlsToEntries(
       [...noParamRoutes.map((r) => r.pathname), ...assets],
-      manifestHash
-    )
+      manifestHash,
+    ),
   );
 
   // the rest of requests (like /api/) should be handled by network first (https://github.com/BuilderIO/qwik/issues/5148#issuecomment-1814692124)
@@ -42,12 +42,24 @@ export function setupPwa() {
     registerRoute(
       new NavigationRoute(createHandlerBoundToURL(route.pathname), {
         allowlist: [route.pattern],
-      })
+      }),
     );
   }
   for (const route of paramRoutes) {
     registerRoute(route.pattern, new StaleWhileRevalidate());
   }
+
+  // Skip-Waiting Service Worker-based solution
+  self.addEventListener("activate", async () => {
+    // after we've taken over, iterate over all the current clients (windows)
+    const clients = await self.clients.matchAll({ type: "window" });
+    clients.forEach((client) => {
+      // ...and refresh each one of them
+      client.navigate(client.url);
+    });
+  });
+
+  self.skipWaiting();
 
   const base = "/build/"; // TODO: it should be dynamic based on the build
   const qprefetchEvent = new MessageEvent<ServiceWorkerMessage>("message", {
