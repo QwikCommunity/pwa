@@ -12,6 +12,7 @@ import { join } from "node:path";
 export interface QwikPWAContext {
   version: string;
   userOptions: PWAOptions;
+  webManifestUrl: string;
   options: ResolvedPWAOptions;
   viteConfig: ResolvedConfig;
   qwikPlugin: QwikVitePlugin;
@@ -29,6 +30,7 @@ export function createContext(options: PWAOptions): QwikPWAContext {
   return {
     version,
     userOptions: options,
+    webManifestUrl: undefined!,
     options: undefined!,
     viteConfig: undefined!,
     publicDir: undefined!,
@@ -63,6 +65,10 @@ export function initializeContext(
   ctx.clientOutBaseDir = join(ctx.clientOutDir, ctx.basePathRelDir);
   ctx.swClientDistPath = join(ctx.clientOutBaseDir, "service-worker.js");
   if (ctx.userOptions.config || ctx.userOptions.preset) {
+    // don't use ?? in ctx.basePathRelDir because it can be an empty string
+    ctx.webManifestUrl = `${ctx.basePathRelDir || "/"}${
+      ctx.userOptions.webManifestFilename ?? "manifest.json"
+    }`;
     ctx.assets = import("./assets-generator")
       .then(({ loadInstructions }) => loadInstructions(ctx))
       .catch((e) => {

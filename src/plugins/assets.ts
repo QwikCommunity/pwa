@@ -1,9 +1,5 @@
 import type { QwikPWAContext } from "../context";
 import type { Plugin } from "vite";
-// import fs from "node:fs/promises";
-// import { join } from "node:path";
-// import { fileURLToPath } from "node:url";
-// import type { DocumentLink } from "@builder.io/qwik-city";
 
 const VIRTUAL = "virtual:qwik-pwa/head";
 const RESOLVED_VIRTUAL = `\0${VIRTUAL}`;
@@ -42,10 +38,20 @@ export const meta = [];
         const url = req.url;
         if (!url) return next();
 
-        if (!/\.(ico|png|svg|webp)$/.test(url)) return next();
+        if (url !== ctx.webManifestUrl && !/\.(ico|png|svg|webp)$/.test(url))
+          return next();
+
+        const { overrideManifestIcons = true } = ctx.userOptions;
+
+        if (url === ctx.webManifestUrl && !overrideManifestIcons) return next();
 
         const assetsGenerator = await ctx.assets;
         if (!assetsGenerator) return next();
+
+        if (url === ctx.webManifestUrl) {
+          await assetsGenerator.injectDevWebManifestIcons();
+          return next();
+        }
 
         const icon = await assetsGenerator.findIconAsset(url);
         if (!icon) return next();
@@ -93,24 +99,6 @@ export const meta = [];
         if (!assets) return;
 
         await assets.generate();
-
-        /*await generateAssets(iconsInstructions, true, ctx.clientOutBaseDir);
-        const webManifestPath = path.resolve(
-          ctx.clientOutBaseDir,
-          "manifest.json",
-        );
-        const webManifest: Record<string, any> = JSON.parse(
-          await fs.readFile(webManifestPath, { encoding: "utf-8" }),
-        );
-        Object.assign(
-          webManifest,
-          generateManifestIconsEntry("object", iconsInstructions),
-        );
-        webManifest.orientation = options.orientation;
-        await fs.writeFile(
-          webManifestPath,
-          JSON.stringify(webManifest, undefined, 2),
-        );*/
       },
     },
   };

@@ -66,33 +66,14 @@ export async function loadInstructions(ctx: QwikPWAContext) {
   return {
     async generate() {
       await mkdir(assetsContext.imageOutDir, { recursive: true });
-      const promise = generateAssets(
-        assetsContext.assetsInstructions,
-        true,
-        assetsContext.imageOutDir,
-      );
-      if (ctx.options.overrideManifestIcons) {
-        await Promise.all([
-          promise,
-          readManifestFile(ctx).then((manifest) => {
-            if (manifest) {
-              manifest.manifest.icons = generateManifestIconsEntry(
-                "object",
-                assetsContext.assetsInstructions,
-              ).icons;
-              return writeFile(
-                manifest.manifestFile,
-                JSON.stringify(manifest.manifest, undefined, 2),
-                "utf-8",
-              );
-            }
-
-            return Promise.resolve();
-          }),
-        ]);
-      } else {
-        await promise;
-      }
+      await Promise.all([
+        generateAssets(
+          assetsContext.assetsInstructions,
+          true,
+          assetsContext.imageOutDir,
+        ),
+        this.injectDevWebManifestIcons(),
+      ]);
     },
     async findIconAsset(path: string) {
       let resolved = assetsContext.cache.get(path);
@@ -149,14 +130,10 @@ if (import.meta.hot) {
       }
 
       if (assetsContext.includeWebManifest) {
-        const href =
-          typeof ctx.options.includeWebManifest === "string"
-            ? ctx.options.includeWebManifest
-            : "manifest.json";
         header.link.push({
           key: "manifest",
           rel: "manifest",
-          href: `${ctx.basePathRelDir || "/"}${href}`,
+          href: ctx.webManifestUrl,
         });
       }
 
@@ -188,6 +165,22 @@ if (import.meta.hot) {
       if (result) await loadAssetsGeneratorContext(ctx, assetsContext);
 
       return result;
+    },
+    async injectDevWebManifestIcons() {
+      if (!assetsContext.overrideManifestIcons) return;
+
+      const manifest = await readManifestFile(ctx);
+      if (manifest) {
+        manifest.manifest.icons = generateManifestIconsEntry(
+          "object",
+          assetsContext.assetsInstructions,
+        ).icons;
+        await writeFile(
+          manifest.manifestFile,
+          JSON.stringify(manifest.manifest, undefined, 2),
+          "utf-8",
+        );
+      }
     },
   } satisfies PWAAssetsGenerator;
 }
@@ -328,14 +321,10 @@ async function loadAssetsGeneratorContext(
 }
 
 async function readManifestFile({ options, viteConfig }: QwikPWAContext) {
-  if (!options.overrideManifestIcons || !options.includeWebManifest) return;
-
-  const name =
-    typeof options.includeWebManifest === "string"
-      ? options.includeWebManifest
-      : "manifest.webmanifest";
-
-  const manifestFile = resolve(viteConfig.publicDir ?? "public", name);
+  const manifestFile = resolve(
+    viteConfig.publicDir ?? "public",
+    options.webManifestFilename,
+  );
   const isFile = await lstat(manifestFile)
     .then((stat) => stat.isFile())
     .catch(() => false);

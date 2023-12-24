@@ -67,19 +67,27 @@ export interface PWAOptions {
    */
   includeThemeColor?: boolean;
   /**
+   * The name of the web manifest file located in the Vite's `publicDir` folder (defaults to `public` folder).
+   *
+   * @default 'manifest.json'
+   */
+  webManifestFilename?: string;
+  /**
    * Should the plugin override the PWA web manifest icons' entry?
+   *
+   * If you rename the `public/manifest.json` file, remember to update `webManifestFilename` option.
+   *
+   * With this option enabled, the plugin will add the icons entry to your web manifest file.
    *
    * @default true
    */
   overrideManifestIcons?: boolean;
   /**
-   * Should the plugin include the PWA web manifest in the link?
+   * Should the plugin include the PWA web manifest in the head links?
    *
-   * If you provide `true`, this plugin will use `public/manifest.json`.
-   *
-   * If you provide a string, it will be used as the path to your web manifest file: it must be a relative path to the project root folder.
+   * If you enable this option, remember to remove `<link rel="manifest" href="/manifest.json" />` from `src/root.tsx` component.
    *
    * @default false
    */
-  includeWebManifest?: boolean | string;
+  includeWebManifest?: boolean;
 }
