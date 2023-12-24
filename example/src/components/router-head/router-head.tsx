@@ -1,3 +1,4 @@
+/// <reference types="@qwikdev/pwa/head" />
 import { useDocumentHead, useLocation } from "@builder.io/qwik-city";
 
 import { component$ } from "@builder.io/qwik";
