@@ -1,10 +1,21 @@
 {
   "name": "@qwikdev/pwa",
+  "type": "module",
   "version": "0.0.1",
-  "description": "Create a reusable Qwik component library",
-  "main": "./dist/index.qwik.mjs",
-  "qwik": "./dist/index.qwik.mjs",
-  "types": "./lib-types/index.d.ts",
+  "packageManager": "pnpm@8.12.1",
+  "description": "Qwik PWA",
+  "homepage": "https://github.com/QwikDev/pwa#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/QwikDev/pwa.git"
+  },
+  "bugs": "https://github.com/QwikDev/pwa/issues",
+  "keywords": [
+    "qwik",
+    "pwa",
+    "workbox",
+    "service worker"
+  ],
   "exports": {
     ".": {
       "import": "./dist/index.qwik.mjs",
@@ -22,6 +33,9 @@
       "types": "./lib-types/icons-entry.d.ts"
     }
   },
+  "main": "./dist/index.qwik.mjs",
+  "qwik": "./dist/index.qwik.mjs",
+  "types": "./lib-types/index.d.ts",
   "files": [
     "dist",
     "lib-types"
@@ -29,8 +43,6 @@
   "engines": {
     "node": ">=15.0.0"
   },
-  "private": false,
-  "type": "module",
   "scripts": {
     "build": "qwik build",
     "build.lib.watch": "vite build --mode lib --watch",

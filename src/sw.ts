@@ -16,13 +16,10 @@ export const assets = [...publicDirAssets, ...emittedAssets];
 export { routes };
 
 function urlsToEntries(urls: string[], hash: string): PrecacheEntry[] {
-  const matcher = /^build\/q-([a-f0-9]{8})\./;
+  const matcher = /^build\/q-/;
   return urls.map((url) => {
     const match = url.match(matcher);
-    return {
-      url,
-      revision: `${match ? match[1] : hash}`,
-    };
+    return match ? { url } : { url, revision: hash };
   });
 }
 
