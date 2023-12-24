@@ -6,8 +6,8 @@ import { builtinModules } from "node:module";
 // import tsconfigPaths from "vite-tsconfig-paths";
 
 const { dependencies = {}, peerDependencies = {} } = pkg as any;
-const makeRegex = (dep) => new RegExp(`^${dep}(/.*)?$`);
-const excludeAll = (obj) => Object.keys(obj).map(makeRegex);
+const makeRegex = (dep: string) => new RegExp(`^${dep}(/.*)?$`);
+const excludeAll = (obj: any) => Object.keys(obj).map(makeRegex);
 
 export default defineConfig({
   build: {
