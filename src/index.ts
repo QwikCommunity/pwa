@@ -6,7 +6,9 @@ import ClientPlugin from "./plugins/client";
 import SSRPlugin from "./plugins/ssr";
 import AssetsPlugin from "./plugins/assets";
 
-export function qwikPwa(options: PWAOptions): Plugin[] {
+export function qwikPwa(
+  options: PWAOptions = { preset: "minimal-2023" },
+): Plugin[] {
   const ctx = createContext(options);
   return [
     MainPlugin(ctx),

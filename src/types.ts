@@ -1,11 +1,14 @@
+import type { BuiltInPreset, Preset } from "@vite-pwa/assets-generator/config";
+import type { HtmlLinkPreset } from "@vite-pwa/assets-generator/api";
+
 /**
- * PWA assets generation and injection options.
+ * Qwik PWA options.
  */
-export interface PWAAssets {
+export interface PWAOptions {
   /**
    * PWA assets generation and injection.
    *
-   * If `true` the plugin will search for the pwa assets generator configuration file in the root directory of your project:
+   * By default, the plugin will search for the pwa assets generator configuration file in the root directory of your project:
    * - pwa-assets.config.js
    * - pwa-assets.config.mjs
    * - pwa-assets.config.cjs
@@ -15,23 +18,48 @@ export interface PWAAssets {
    *
    * If using a string path, it should be relative to the root directory of your project.
    *
-   * @default true
+   * Setting to `false` will disable config resolving.
+   *
+   * @default false
    * @see https://vite-pwa-org.netlify.app/assets-generator/cli.html#configurations
    */
-  path?: true | string;
+  config?: string | boolean;
+  /**
+   * Preset to use.
+   *
+   * If `config` option is enabled, this option will be ignored.
+   *
+   * Setting to `false` will disable PWA assets generation if `config` option disabled.
+   *
+   * @default 'minimal-2023'
+   */
+  preset?: false | BuiltInPreset | Preset;
+  /**
+   * Override assets?
+   *
+   * @default true
+   */
+  overrideAssets?: boolean;
+  /**
+   * Path relative to `root` folder where to find the image to use for generating PWA assets.
+   *
+   * @default `public/favicon.svg`
+   */
+  image?: string;
+  /**
+   * The preset to use for head links (favicon links).
+   *
+   * @see https://vite-pwa-org.netlify.app/assets-generator/#preset-minimal-2023
+   * @see https://vite-pwa-org.netlify.app/assets-generator/#preset-minimal
+   * @default '2023'
+   */
+  htmlPreset?: HtmlLinkPreset;
   /**
    * Should the plugin override the PWA web manifest icons' entry?
-   *
-   * Ff you provide `true`, this plugin will use `public/manifest.webmanifest`.
-   *
-   * If you provide a string, it will be used as the path to your web manifest file: it must be a relative path inside the public folder.
    *
    * @default false
    */
   overrideManifestIcons?: boolean;
-  /**
-   * PWA assets generation and injection options.
-   */
   /**
    * Should the plugin include html head links?
    *
@@ -39,29 +67,19 @@ export interface PWAAssets {
    */
   includeHtmlHeadLinks?: boolean;
   /**
-   * Should the PWA web manifest `theme_color` be injected in the html head?
+   * Should the PWA web manifest `theme_color` be injected in the html head when present?
    *
-   * @default false
+   * @default true
    */
   includeThemeColor?: boolean;
   /**
    * Should the plugin include the PWA web manifest in the link?
    *
-   * If you provide `true`, this plugin will use `public/manifest.webmanifest`.
+   * If you provide `true`, this plugin will use `public/manifest.json`.
    *
-   * You can disable this feature by providing `false` or using a custom web manifest name relative to the public folder (for example: `manifest.json`).
+   * If you provide a string, it will be used as the path to your web manifest file: it must be a relative path inside the public folder.
    *
    * @default true
    */
   includeWebManifest?: boolean | string;
-}
-
-/**
- * PWA options.
- */
-export interface PWAOptions {
-  /**
-   * PWA assets generation and injection options.
-   */
-  assets?: PWAAssets;
 }

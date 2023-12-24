@@ -3,7 +3,7 @@ import type {
   QwikVitePlugin,
 } from "@builder.io/qwik/optimizer";
 import type { QwikCityPlugin } from "@builder.io/qwik-city/vite";
-import type { PWAAssetsGenerator } from "./assets-types";
+import type { PWAAssetsGenerator, ResolvedPWAOptions } from "./assets-types";
 import type { ResolvedConfig } from "vite";
 import type { PWAOptions } from "./types";
 import { version } from "../package.json";
@@ -11,7 +11,8 @@ import { join } from "node:path";
 
 export interface QwikPWAContext {
   version: string;
-  options: PWAOptions;
+  userOptions: PWAOptions;
+  options: ResolvedPWAOptions;
   viteConfig: ResolvedConfig;
   qwikPlugin: QwikVitePlugin;
   qwikCityPlugin: QwikCityPlugin;
@@ -27,7 +28,8 @@ export interface QwikPWAContext {
 export function createContext(options: PWAOptions): QwikPWAContext {
   return {
     version,
-    options,
+    userOptions: options,
+    options: undefined!,
     viteConfig: undefined!,
     publicDir: undefined!,
     qwikPlugin: undefined!,
@@ -60,7 +62,7 @@ export function initializeContext(
     .replace(/^\/|\/$/, "");
   ctx.clientOutBaseDir = join(ctx.clientOutDir, ctx.basePathRelDir);
   ctx.swClientDistPath = join(ctx.clientOutBaseDir, "service-worker.js");
-  if (ctx.options.assets)
+  if (ctx.userOptions.config || ctx.userOptions.preset) {
     ctx.assets = import("./assets-generator")
       .then(({ loadInstructions }) => loadInstructions(ctx))
       .catch((e) => {
@@ -77,4 +79,5 @@ export function initializeContext(
         );
         return Promise.resolve(undefined);
       });
+  }
 }

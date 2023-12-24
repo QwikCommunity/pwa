@@ -14,12 +14,7 @@ export default defineConfig(() => {
       qwikCity(),
       qwikVite(),
       tsconfigPaths(),
-      qwikPwa({
-        assets: {
-          includeWebManifest: 'manifest.json',
-          overrideManifestIcons: true,
-        }
-      })
+      qwikPwa()
     ],
     preview: {
       headers: {

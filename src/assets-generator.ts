@@ -18,6 +18,7 @@ import type {
 } from "@vite-pwa/assets-generator/api";
 import { QwikPWAContext } from "./context";
 import { DocumentLink } from "@builder.io/qwik-city";
+import { resolveOptions } from "./assets-options";
 
 interface AssetsGeneratorContext {
   lastModified: number;
@@ -39,6 +40,7 @@ interface AssetsGeneratorContext {
 }
 
 export async function loadInstructions(ctx: QwikPWAContext) {
+  await resolveOptions(ctx);
   const assetsContext = await loadAssetsGeneratorContext(ctx);
   if (!assetsContext) return;
 
@@ -69,7 +71,7 @@ export async function loadInstructions(ctx: QwikPWAContext) {
         true,
         assetsContext.imageOutDir,
       );
-      if (ctx.options.assets!.overrideManifestIcons) {
+      if (ctx.options.overrideManifestIcons) {
         await Promise.all([
           promise,
           readManifestFile(ctx).then((manifest) => {
@@ -148,9 +150,9 @@ if (import.meta.hot) {
 
       if (assetsContext.includeWebManifest) {
         const href =
-          typeof ctx.options.assets!.includeWebManifest === "string"
-            ? ctx.options.assets!.includeWebManifest
-            : "manifest.webmanifest";
+          typeof ctx.options.includeWebManifest === "string"
+            ? ctx.options.includeWebManifest
+            : "manifest.json";
         header.link.push({
           key: "manifest",
           rel: "manifest",
@@ -181,22 +183,6 @@ if (import.meta.hot) {
 
       return header;
     },
-    async injectManifestIcons() {
-      /*
-      if (!assetsContext.overrideManifestIcons) return;
-
-      const manifest = await readManifestFile(viteConfig, options);
-      if (manifest) {
-        manifest.icons = generateManifestIconsEntry(
-          "object",
-          assetsContext.assetsInstructions,
-        ).icons;
-      }
-*/
-    },
-    lookupPWAAssetsInstructions() {
-      return assetsContext.assetsInstructions;
-    },
     async checkHotUpdate(file) {
       const result = assetsContext.sources.includes(file);
       if (result) await loadAssetsGeneratorContext(ctx, assetsContext);
@@ -206,17 +192,30 @@ if (import.meta.hot) {
   } satisfies PWAAssetsGenerator;
 }
 
+async function loadConfiguration(root: string, ctx: QwikPWAContext) {
+  if (ctx.options.config === false) {
+    return await loadConfig<UserConfig>(root, {
+      config: false,
+      preset: ctx.options.preset as UserConfig["preset"],
+      images: ctx.options.images,
+      logLevel: "silent",
+    });
+  }
+
+  return await loadConfig<UserConfig>(
+    root,
+    typeof ctx.options.config === "boolean"
+      ? root
+      : { config: ctx.options.config },
+  );
+}
+
 async function loadAssetsGeneratorContext(
   ctx: QwikPWAContext,
   assetContext?: AssetsGeneratorContext,
 ) {
   const root = ctx.viteConfig.root ?? process.cwd();
-  const { config, sources } = await loadConfig<UserConfig>(
-    root,
-    typeof ctx.options.assets!.path === "boolean"
-      ? root
-      : { config: ctx.options.assets!.path },
-  );
+  const { config, sources } = await loadConfiguration(root, ctx);
   if (!config.preset) {
     console.error(
       [
@@ -284,11 +283,11 @@ async function loadAssetsGeneratorContext(
       userHeadLinkOptions?.resolveSvgName ?? ((name) => basename(name)),
   });
   const {
-    includeWebManifest = true,
-    includeHtmlHeadLinks = true,
-    includeThemeColor = false,
-    overrideManifestIcons = false,
-  } = ctx.options.assets!;
+    includeWebManifest,
+    includeHtmlHeadLinks,
+    includeThemeColor,
+    overrideManifestIcons,
+  } = ctx.options;
 
   if (assetContext === undefined) {
     return {
@@ -329,15 +328,11 @@ async function loadAssetsGeneratorContext(
 }
 
 async function readManifestFile({ options, viteConfig }: QwikPWAContext) {
-  if (
-    !options.assets!.overrideManifestIcons ||
-    !options.assets!.includeWebManifest
-  )
-    return;
+  if (!options.overrideManifestIcons || !options.includeWebManifest) return;
 
   const name =
-    typeof options.assets!.includeWebManifest === "string"
-      ? options.assets!.includeWebManifest
+    typeof options.includeWebManifest === "string"
+      ? options.includeWebManifest
       : "manifest.webmanifest";
 
   const manifestFile = resolve(viteConfig.publicDir ?? "public", name);
