@@ -77,7 +77,7 @@ export interface PWAOptions {
    *
    * If you provide `true`, this plugin will use `public/manifest.json`.
    *
-   * If you provide a string, it will be used as the path to your web manifest file: it must be a relative path inside the public folder.
+   * If you provide a string, it will be used as the path to your web manifest file: it must be a relative path to the project root folder.
    *
    * @default true
    */
