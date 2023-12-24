@@ -7,10 +7,10 @@ export function resolveOptions(ctx: QwikPWAContext) {
     overrideAssets = true,
     image = "public/favicon.svg",
     htmlPreset = "2023",
-    overrideManifestIcons = false,
+    overrideManifestIcons = true,
     includeHtmlHeadLinks = true,
     includeThemeColor = true,
-    includeWebManifest = true,
+    includeWebManifest = false,
   } = ctx.userOptions;
 
   ctx.options = {

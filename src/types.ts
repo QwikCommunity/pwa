@@ -55,12 +55,6 @@ export interface PWAOptions {
    */
   htmlPreset?: HtmlLinkPreset;
   /**
-   * Should the plugin override the PWA web manifest icons' entry?
-   *
-   * @default false
-   */
-  overrideManifestIcons?: boolean;
-  /**
    * Should the plugin include html head links?
    *
    * @default true
@@ -73,13 +67,19 @@ export interface PWAOptions {
    */
   includeThemeColor?: boolean;
   /**
+   * Should the plugin override the PWA web manifest icons' entry?
+   *
+   * @default true
+   */
+  overrideManifestIcons?: boolean;
+  /**
    * Should the plugin include the PWA web manifest in the link?
    *
    * If you provide `true`, this plugin will use `public/manifest.json`.
    *
    * If you provide a string, it will be used as the path to your web manifest file: it must be a relative path to the project root folder.
    *
-   * @default true
+   * @default false
    */
   includeWebManifest?: boolean | string;
 }
