@@ -79,6 +79,7 @@ export async function loadInstructions(ctx: QwikPWAContext) {
     resolveSWPrecachingAssets() {
       const resources = new Set<string>();
       const instruction = assetsContext.assetsInstructions;
+      // exclude svg file since it is in the public folder
       Array.from(Object.keys(instruction.favicon))
         .filter((icon) => !icon.endsWith(".svg"))
         .forEach((icon) => resources.add(icon));

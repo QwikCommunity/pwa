@@ -22,7 +22,6 @@ export default function ClientPlugin(ctx: QwikPWAContext): Plugin {
         );
         const assets = await ctx.assets;
         const generatedAssetsUrls = assets?.resolveSWPrecachingAssets() ?? [];
-        console.log(generatedAssetsUrls);
         const routes = ctx.qwikCityPlugin.api.getRoutes();
         const swCode = await fs.readFile(ctx.swClientDistPath, "utf-8");
         const swCodeUpdate = `
