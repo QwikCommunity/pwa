@@ -72,17 +72,7 @@ export function initializeContext(
     ctx.assets = import("./assets-generator")
       .then(({ loadInstructions }) => loadInstructions(ctx))
       .catch((e) => {
-        console.error(
-          [
-            "",
-            `Qwik PWA v${ctx.version}`,
-            "WARNING: you must install the following dev dependencies to use the PWA assets generator:",
-            '- "@vite-pwa/assets-generator"',
-            '- "sharp"',
-            '- "sharp-ico"',
-          ].join("\n"),
-          e,
-        );
+        console.error(["", `Qwik PWA v${ctx.version}`].join("\n"), e);
         return Promise.resolve(undefined);
       });
   }
