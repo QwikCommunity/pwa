@@ -73,7 +73,7 @@ export async function loadInstructions(ctx: QwikPWAContext) {
           true,
           assetsContext.imageOutDir,
         ),
-        this.injectDevWebManifestIcons(),
+        writeWebManifest(ctx, assetsContext),
       ]);
     },
     resolveSWPrecachingAssets() {
@@ -214,22 +214,6 @@ export const meta = ${JSON.stringify(header.meta)};
       if (result) await loadAssetsGeneratorContext(ctx, assetsContext);
 
       return result;
-    },
-    async injectDevWebManifestIcons() {
-      if (!assetsContext.overrideManifestIcons) return;
-
-      const manifest = await readManifestFile(ctx);
-      if (!manifest) return;
-
-      return JSON.stringify(
-        Object.assign(
-          manifest.manifest,
-          generateManifestIconsEntry("object", assetsContext.assetsInstructions)
-            .icons,
-        ),
-        undefined,
-        2,
-      );
     },
   } satisfies PWAAssetsGenerator;
 }
@@ -400,5 +384,24 @@ async function injectWebManifestIcons(
   const icons = generateManifestIconsEntry("object", assetsInstructions).icons;
   return Buffer.from(
     JSON.stringify(Object.assign(manifest.manifest, { icons }), undefined, 2),
+  );
+}
+
+async function writeWebManifest(
+  ctx: QwikPWAContext,
+  assetContext: AssetsGeneratorContext,
+) {
+  if (!ctx.options.overrideManifestIcons) return;
+  const manifest = await readManifestFile(ctx);
+  if (!manifest) return;
+  const buffer = await injectWebManifestIcons(
+    manifest,
+    assetContext.assetsInstructions,
+  );
+
+  await writeFile(
+    resolve(ctx.clientOutBaseDir, ctx.options.webManifestFilename),
+    buffer,
+    "utf-8",
   );
 }

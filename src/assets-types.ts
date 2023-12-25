@@ -24,7 +24,6 @@ export interface PWAAssetsGenerator {
   findPWAAsset(path: string): Promise<ResolvedPWAAsset | undefined>;
   resolveHtmlLinks(): Promise<string>;
   resolveDevHtmlAssets(): Promise<DevHtmlAssets>;
-  injectDevWebManifestIcons(): Promise<string | undefined>;
   resolveSWPrecachingAssets(): string[];
   checkHotUpdate(path: string): Promise<boolean>;
 }
