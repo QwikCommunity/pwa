@@ -2,7 +2,6 @@ import fg from "fast-glob";
 import fs from "node:fs/promises";
 import type { QwikPWAContext } from "../context";
 import type { Plugin } from "vite";
-import { ImageAssetsInstructions } from "@vite-pwa/assets-generator/api";
 
 export default function ClientPlugin(ctx: QwikPWAContext): Plugin {
   return {

@@ -3,11 +3,12 @@ import type {
   QwikVitePlugin,
 } from "@builder.io/qwik/optimizer";
 import type { QwikCityPlugin } from "@builder.io/qwik-city/vite";
-import type { PWAAssetsGenerator, ResolvedPWAOptions } from "./assets-types";
+import type { PWAAssetsGenerator, ResolvedPWAOptions } from "./assets/types";
 import type { ResolvedConfig } from "vite";
 import type { PWAOptions } from "./types";
 import { version } from "../package.json";
 import { join } from "node:path";
+import { resolveOptions } from "./assets/options";
 
 export interface QwikPWAContext {
   version: string;
@@ -65,11 +66,8 @@ export function initializeContext(
   ctx.clientOutBaseDir = join(ctx.clientOutDir, ctx.basePathRelDir);
   ctx.swClientDistPath = join(ctx.clientOutBaseDir, "service-worker.js");
   if (ctx.userOptions.config || ctx.userOptions.preset) {
-    // don't use ?? in ctx.basePathRelDir because it can be an empty string
-    ctx.webManifestUrl = `${ctx.basePathRelDir || "/"}${
-      ctx.userOptions.webManifestFilename ?? "manifest.json"
-    }`;
-    ctx.assets = import("./assets-generator")
+    resolveOptions(ctx);
+    ctx.assets = import("./assets/generator")
       .then(({ loadInstructions }) => loadInstructions(ctx))
       .catch((e) => {
         console.error(["", `Qwik PWA v${ctx.version}`].join("\n"), e);

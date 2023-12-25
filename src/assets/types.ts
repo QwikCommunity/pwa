@@ -1,5 +1,6 @@
 import type { DocumentLink, DocumentMeta } from "@builder.io/qwik-city";
-import type { PWAOptions } from "./types";
+import type { PWAOptions } from "../types";
+import type { ImageAssetsInstructions } from "@vite-pwa/assets-generator/api";
 
 export interface ResolvedPWAAsset {
   path: string;
@@ -26,4 +27,24 @@ export interface PWAAssetsGenerator {
   resolveDevHtmlAssets(): Promise<DevHtmlAssets>;
   resolveSWPrecachingAssets(): string[];
   checkHotUpdate(path: string): Promise<boolean>;
+}
+
+export interface AssetsGeneratorContext {
+  lastModified: number;
+  assetsInstructions: ImageAssetsInstructions;
+  cache: Map<string, ResolvedPWAAsset>;
+  useImage: string;
+  imageFile: string;
+  publicDir: string;
+  outDir: string;
+  imageName: string;
+  imageOutDir: string;
+  xhtml: boolean;
+  includeId: boolean;
+  sources: string[];
+  includeWebManifest: boolean | string;
+  includeThemeColor: boolean;
+  includeHtmlHeadLinks: boolean;
+  overrideManifestIcons: boolean;
+  resolvedWebManifestFile: string;
 }

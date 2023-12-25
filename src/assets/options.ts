@@ -1,6 +1,11 @@
-import { QwikPWAContext } from "./context";
+import type { QwikPWAContext } from "../context";
 
 export function resolveOptions(ctx: QwikPWAContext) {
+  // don't use ?? in ctx.basePathRelDir because it can be an empty string
+  ctx.webManifestUrl = `${ctx.basePathRelDir || "/"}${
+    ctx.userOptions.webManifestFilename ?? "manifest.json"
+  }`;
+
   const {
     config = false,
     preset = "minimal-2023",
