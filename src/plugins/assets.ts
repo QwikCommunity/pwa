@@ -46,10 +46,10 @@ export const meta = [];
         if (!assetsGenerator) return next();
 
         // will handle pwa icons and web manifest (when )
-        const assets = await assetsGenerator.findPWAAsset(url);
-        if (!assets) return next();
+        const asset = await assetsGenerator.findPWAAsset(url);
+        if (!asset) return next();
 
-        if (assets.age > 0) {
+        if (asset.age > 0) {
           const ifModifiedSince =
             req.headers["if-modified-since"] ??
             req.headers["If-Modified-Since"];
@@ -60,7 +60,7 @@ export const meta = [];
             : undefined;
           if (
             useIfModifiedSince &&
-            new Date(assets.lastModified).getTime() / 1000 >=
+            new Date(asset.lastModified).getTime() / 1000 >=
               new Date(useIfModifiedSince).getTime() / 1000
           ) {
             res.statusCode = 304;
@@ -69,13 +69,13 @@ export const meta = [];
           }
         }
 
-        const buffer = await assets.buffer;
-        res.setHeader("Age", assets.age / 1000);
-        res.setHeader("Content-Type", assets.mimeType);
+        const buffer = await asset.buffer;
+        res.setHeader("Age", asset.age / 1000);
+        res.setHeader("Content-Type", asset.mimeType);
         res.setHeader("Content-Length", buffer.length);
         res.setHeader(
           "Last-Modified",
-          new Date(assets.lastModified).toUTCString(),
+          new Date(asset.lastModified).toUTCString(),
         );
         res.statusCode = 200;
         res.end(buffer);
