@@ -18,24 +18,11 @@ export default function ClientPlugin(ctx: QwikPWAContext): Plugin {
         const publicDirAssets = await fg.glob("**/*", { cwd: ctx.publicDir });
         // the q-*.js files are going to be handled by qwik itself
         const emittedAssets = Object.keys(bundle).filter(
-          (key) => !/.*q-.*\.js$/.test(key)
+          (key) => !/.*q-.*\.js$/.test(key),
         );
-
-        console.log();
-        const assetsInstructions = {
-          ...((await ctx.assets)?.assetsContext?.assetsInstructions ?? {}),
-        };
-        delete assetsInstructions.image;
-        delete assetsInstructions.originalName;
-        const assetsInstructionsIconAssets = Object.values(
-          assetsInstructions as Omit<
-            ImageAssetsInstructions,
-            "image" | "originalName"
-          >
-        ).flatMap((entry) => Object.values(entry));
-        const generatedAssetsUrls = assetsInstructionsIconAssets.map(
-          (asset) => asset.url
-        );
+        const assets = await ctx.assets;
+        const generatedAssetsUrls = assets?.resolveSWPrecachingAssets() ?? [];
+        console.log(generatedAssetsUrls);
         const routes = ctx.qwikCityPlugin.api.getRoutes();
         const swCode = await fs.readFile(ctx.swClientDistPath, "utf-8");
         const swCodeUpdate = `
@@ -48,10 +35,10 @@ export default function ClientPlugin(ctx: QwikPWAContext): Plugin {
           .map(
             (route) =>
               `{ pathname: ${JSON.stringify(
-                route.pathname
+                route.pathname,
               )}, pattern: new RegExp(${JSON.stringify(route.pattern.source)}),
                 hasParams: ${!!route.paramNames.length}
-             }`
+             }`,
           )
           .join(",\n")}];
         
