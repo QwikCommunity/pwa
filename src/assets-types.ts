@@ -1,8 +1,7 @@
 import type { DocumentLink, DocumentMeta } from "@builder.io/qwik-city";
 import type { PWAOptions } from "./types";
-import type { AssetsContext } from "./assets-generator";
 
-export interface ResolvedIconAsset {
+export interface ResolvedPWAAsset {
   path: string;
   mimeType: string;
   buffer: Promise<Buffer>;
@@ -21,12 +20,11 @@ export interface ResolvedPWAOptions
 }
 
 export interface PWAAssetsGenerator {
-  assetsContext: AssetsContext;
   generate(): Promise<void>;
-  findIconAsset(path: string): Promise<ResolvedIconAsset | undefined>;
-  resolveHtmlLinks(wsEvent: string): Promise<string>;
+  findPWAAsset(path: string): Promise<ResolvedPWAAsset | undefined>;
+  resolveHtmlLinks(): Promise<string>;
   resolveDevHtmlAssets(): Promise<DevHtmlAssets>;
-  injectDevWebManifestIcons(): Promise<void>;
+  injectDevWebManifestIcons(): Promise<string | undefined>;
   resolveSWPrecachingAssets(): string[];
   checkHotUpdate(path: string): Promise<boolean>;
 }

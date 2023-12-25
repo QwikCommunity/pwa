@@ -3,7 +3,6 @@ import type { Plugin } from "vite";
 
 const VIRTUAL = "virtual:qwik-pwa/head";
 const RESOLVED_VIRTUAL = `\0${VIRTUAL}`;
-const DEV_RELOAD_PAGE_NAME = "qwik-pwa:reload-page";
 
 export default function AssetsPlugin(ctx: QwikPWAContext): Plugin {
   return {
@@ -16,20 +15,22 @@ export default function AssetsPlugin(ctx: QwikPWAContext): Plugin {
       if (id === RESOLVED_VIRTUAL) {
         const assets = await ctx.assets;
         return (
-          assets?.resolveHtmlLinks(DEV_RELOAD_PAGE_NAME) ??
+          assets?.resolveHtmlLinks() ??
           `export const links = [];
 export const meta = [];
 `
         );
       }
     },
+    buildStart() {
+      // add web manifest to watcher, so we can reload the page when it changes
+      this.addWatchFile(ctx.webManifestUrl);
+    },
     async handleHotUpdate({ file, server }) {
       const assetsGenerator = await ctx.assets;
       if (await assetsGenerator?.checkHotUpdate(file)) {
-        server.ws.send({
-          type: "custom",
-          event: DEV_RELOAD_PAGE_NAME,
-        });
+        // just send full page reload to load new assets
+        server.ws.send({ type: "full-reload" });
         return [];
       }
     },
@@ -41,22 +42,14 @@ export const meta = [];
         if (url !== ctx.webManifestUrl && !/\.(ico|png|svg|webp)$/.test(url))
           return next();
 
-        const { overrideManifestIcons = true } = ctx.userOptions;
-
-        if (url === ctx.webManifestUrl && !overrideManifestIcons) return next();
-
         const assetsGenerator = await ctx.assets;
         if (!assetsGenerator) return next();
 
-        if (url === ctx.webManifestUrl) {
-          await assetsGenerator.injectDevWebManifestIcons();
-          return next();
-        }
+        // will handle pwa icons and web manifest (when )
+        const assets = await assetsGenerator.findPWAAsset(url);
+        if (!assets) return next();
 
-        const icon = await assetsGenerator.findIconAsset(url);
-        if (!icon) return next();
-
-        if (icon.age > 0) {
+        if (assets.age > 0) {
           const ifModifiedSince =
             req.headers["if-modified-since"] ??
             req.headers["If-Modified-Since"];
@@ -67,7 +60,7 @@ export const meta = [];
             : undefined;
           if (
             useIfModifiedSince &&
-            new Date(icon.lastModified).getTime() / 1000 >=
+            new Date(assets.lastModified).getTime() / 1000 >=
               new Date(useIfModifiedSince).getTime() / 1000
           ) {
             res.statusCode = 304;
@@ -76,13 +69,13 @@ export const meta = [];
           }
         }
 
-        const buffer = await icon.buffer;
-        res.setHeader("Age", icon.age / 1000);
-        res.setHeader("Content-Type", icon.mimeType);
+        const buffer = await assets.buffer;
+        res.setHeader("Age", assets.age / 1000);
+        res.setHeader("Content-Type", assets.mimeType);
         res.setHeader("Content-Length", buffer.length);
         res.setHeader(
           "Last-Modified",
-          new Date(icon.lastModified).toUTCString()
+          new Date(assets.lastModified).toUTCString(),
         );
         res.statusCode = 200;
         res.end(buffer);

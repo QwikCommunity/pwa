@@ -1,7 +1,7 @@
 import type {
   DevHtmlAssets,
   PWAAssetsGenerator,
-  ResolvedIconAsset,
+  ResolvedPWAAsset,
 } from "./assets-types";
 import type { UserConfig } from "@vite-pwa/assets-generator/config";
 import { loadConfig } from "@vite-pwa/assets-generator/config";
@@ -16,14 +16,14 @@ import type {
   HtmlLink,
   ImageAssetsInstructions,
 } from "@vite-pwa/assets-generator/api";
-import { QwikPWAContext } from "./context";
-import { DocumentLink } from "@builder.io/qwik-city";
+import type { QwikPWAContext } from "./context";
+import type { DocumentLink } from "@builder.io/qwik-city";
 import { resolveOptions } from "./assets-options";
 
 interface AssetsGeneratorContext {
   lastModified: number;
   assetsInstructions: ImageAssetsInstructions;
-  cache: Map<string, ResolvedIconAsset>;
+  cache: Map<string, ResolvedPWAAsset>;
   useImage: string;
   imageFile: string;
   publicDir: string;
@@ -37,10 +37,11 @@ interface AssetsGeneratorContext {
   includeThemeColor: boolean;
   includeHtmlHeadLinks: boolean;
   overrideManifestIcons: boolean;
+  resolvedWebManifestFile: string;
 }
 
 export async function loadInstructions(ctx: QwikPWAContext) {
-  await resolveOptions(ctx);
+  resolveOptions(ctx);
   const assetsContext = await loadAssetsGeneratorContext(ctx);
   if (!assetsContext) return;
 
@@ -64,7 +65,6 @@ export async function loadInstructions(ctx: QwikPWAContext) {
   };
 
   return {
-    assetsContext,
     async generate() {
       await mkdir(assetsContext.imageOutDir, { recursive: true });
       await Promise.all([
@@ -98,10 +98,30 @@ export async function loadInstructions(ctx: QwikPWAContext) {
 
       return Array.from(resources);
     },
-    async findIconAsset(path: string) {
+    async findPWAAsset(path: string) {
       let resolved = assetsContext.cache.get(path);
       if (resolved) {
         resolved.age = Date.now() - resolved.lastModified;
+        return resolved;
+      }
+
+      if (path === ctx.webManifestUrl) {
+        if (!ctx.options.overrideManifestIcons) return;
+
+        const manifest = await readManifestFile(ctx);
+        if (!manifest) return;
+
+        resolved = {
+          path,
+          mimeType: "application/manifest+json",
+          buffer: injectWebManifestIcons(
+            manifest,
+            assetsContext.assetsInstructions,
+          ),
+          lastModified: assetsContext.lastModified,
+          age: 0,
+        } satisfies ResolvedPWAAsset;
+        assetsContext.cache.set(path, resolved);
         return resolved;
       }
 
@@ -121,20 +141,15 @@ export async function loadInstructions(ctx: QwikPWAContext) {
           buffer: iconAsset.buffer(),
           lastModified: assetsContext.lastModified,
           age: 0,
-        } satisfies ResolvedIconAsset;
+        } satisfies ResolvedPWAAsset;
         assetsContext.cache.set(path, resolved);
         return resolved;
       }
     },
-    async resolveHtmlLinks(event: string) {
+    async resolveHtmlLinks() {
       const header = await this.resolveDevHtmlAssets();
       return `export const links = ${JSON.stringify(header.link)};
 export const meta = ${JSON.stringify(header.meta)};
-if (import.meta.hot) {
-  import.meta.hot.on('${event}', () => {
-    window.location.reload();
-  });  
-}            
 `;
     },
     async resolveDevHtmlAssets() {
@@ -184,6 +199,17 @@ if (import.meta.hot) {
       return header;
     },
     async checkHotUpdate(file) {
+      // watch web manifest changes
+      if (file === assetsContext.resolvedWebManifestFile) {
+        // when no web manifest icons injection,
+        // just let Vite do its work
+        // will reload the page or send hmr in src/root.tsx
+        if (!ctx.options.overrideManifestIcons) return false;
+        assetsContext.cache.delete(ctx.webManifestUrl);
+        return true;
+      }
+
+      // watch pwa assets configuration file
       const result = assetsContext.sources.includes(file);
       if (result) await loadAssetsGeneratorContext(ctx, assetsContext);
 
@@ -193,17 +219,17 @@ if (import.meta.hot) {
       if (!assetsContext.overrideManifestIcons) return;
 
       const manifest = await readManifestFile(ctx);
-      if (manifest) {
-        manifest.manifest.icons = generateManifestIconsEntry(
-          "object",
-          assetsContext.assetsInstructions,
-        ).icons;
-        await writeFile(
-          manifest.manifestFile,
-          JSON.stringify(manifest.manifest, undefined, 2),
-          "utf-8",
-        );
-      }
+      if (!manifest) return;
+
+      return JSON.stringify(
+        Object.assign(
+          manifest.manifest,
+          generateManifestIconsEntry("object", assetsContext.assetsInstructions)
+            .icons,
+        ),
+        undefined,
+        2,
+      );
     },
   } satisfies PWAAssetsGenerator;
 }
@@ -298,6 +324,10 @@ async function loadAssetsGeneratorContext(
     resolveSvgName:
       userHeadLinkOptions?.resolveSvgName ?? ((name) => basename(name)),
   });
+  const resolvedWebManifestFile = resolve(
+    publicDir,
+    ctx.options.webManifestFilename,
+  ).replace(/\\/g, "/");
   const {
     includeWebManifest,
     includeHtmlHeadLinks,
@@ -309,7 +339,7 @@ async function loadAssetsGeneratorContext(
     return {
       lastModified: Date.now(),
       assetsInstructions,
-      cache: new Map<string, ResolvedIconAsset>(),
+      cache: new Map<string, ResolvedPWAAsset>(),
       useImage,
       imageFile,
       publicDir,
@@ -324,6 +354,7 @@ async function loadAssetsGeneratorContext(
       includeThemeColor,
       includeHtmlHeadLinks,
       overrideManifestIcons,
+      resolvedWebManifestFile,
     } satisfies AssetsGeneratorContext;
   }
 
@@ -340,6 +371,7 @@ async function loadAssetsGeneratorContext(
   assetContext.includeThemeColor = includeThemeColor;
   assetContext.includeHtmlHeadLinks = includeHtmlHeadLinks;
   assetContext.overrideManifestIcons = overrideManifestIcons;
+  assetContext.resolvedWebManifestFile = resolvedWebManifestFile;
   assetContext.cache.clear();
 }
 
@@ -361,6 +393,12 @@ async function readManifestFile({ options, viteConfig }: QwikPWAContext) {
   };
 }
 
-export type AssetsContext = Awaited<
-  ReturnType<typeof loadAssetsGeneratorContext>
->;
+async function injectWebManifestIcons(
+  manifest: any,
+  assetsInstructions: ImageAssetsInstructions,
+) {
+  const icons = generateManifestIconsEntry("object", assetsInstructions).icons;
+  return Buffer.from(
+    JSON.stringify(Object.assign(manifest.manifest, { icons }), undefined, 2),
+  );
+}
