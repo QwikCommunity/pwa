@@ -64,13 +64,14 @@ export async function loadInstructions(ctx: QwikPWAContext) {
   };
 
   return {
+    assetsContext,
     async generate() {
       await mkdir(assetsContext.imageOutDir, { recursive: true });
       await Promise.all([
         generateAssets(
           assetsContext.assetsInstructions,
           true,
-          assetsContext.imageOutDir,
+          assetsContext.imageOutDir
         ),
         this.injectDevWebManifestIcons(),
       ]);
@@ -105,7 +106,7 @@ export async function loadInstructions(ctx: QwikPWAContext) {
     },
     async resolveHtmlLinks(event: string) {
       const header = await this.resolveDevHtmlAssets();
-      return `export const link = ${JSON.stringify(header.link)};
+      return `export const links = ${JSON.stringify(header.link)};
 export const meta = ${JSON.stringify(header.meta)};
 if (import.meta.hot) {
   import.meta.hot.on('${event}', () => {
@@ -142,19 +143,19 @@ if (import.meta.hot) {
         const apple = Array.from(Object.values(instruction.apple));
         const favicon = Array.from(Object.values(instruction.favicon));
         const appleSplashScreen = Array.from(
-          Object.values(instruction.appleSplashScreen),
+          Object.values(instruction.appleSplashScreen)
         );
         favicon.forEach(
           (icon) =>
-            icon.linkObject && header.link.push(mapLink(icon.linkObject)),
+            icon.linkObject && header.link.push(mapLink(icon.linkObject))
         );
         apple.forEach(
           (icon) =>
-            icon.linkObject && header.link.push(mapLink(icon.linkObject)),
+            icon.linkObject && header.link.push(mapLink(icon.linkObject))
         );
         appleSplashScreen.forEach(
           (icon) =>
-            icon.linkObject && header.link.push(mapLink(icon.linkObject)),
+            icon.linkObject && header.link.push(mapLink(icon.linkObject))
         );
       }
 
@@ -173,12 +174,12 @@ if (import.meta.hot) {
       if (manifest) {
         manifest.manifest.icons = generateManifestIconsEntry(
           "object",
-          assetsContext.assetsInstructions,
+          assetsContext.assetsInstructions
         ).icons;
         await writeFile(
           manifest.manifestFile,
           JSON.stringify(manifest.manifest, undefined, 2),
-          "utf-8",
+          "utf-8"
         );
       }
     },
@@ -199,13 +200,13 @@ async function loadConfiguration(root: string, ctx: QwikPWAContext) {
     root,
     typeof ctx.options.config === "boolean"
       ? root
-      : { config: ctx.options.config },
+      : { config: ctx.options.config }
   );
 }
 
 async function loadAssetsGeneratorContext(
   ctx: QwikPWAContext,
-  assetContext?: AssetsGeneratorContext,
+  assetContext?: AssetsGeneratorContext
 ) {
   const root = ctx.viteConfig.root ?? process.cwd();
   const { config, sources } = await loadConfiguration(root, ctx);
@@ -215,7 +216,7 @@ async function loadAssetsGeneratorContext(
         "",
         `Qwik PWA v${ctx.version}`,
         "ERROR: No preset for assets generator found",
-      ].join("\n"),
+      ].join("\n")
     );
     return;
   }
@@ -228,7 +229,7 @@ async function loadAssetsGeneratorContext(
         "",
         `Qwik PWA v${ctx.version}`,
         "ERROR: No image provided for assets generator",
-      ].join("\n"),
+      ].join("\n")
     );
     return;
   }
@@ -240,7 +241,7 @@ async function loadAssetsGeneratorContext(
           "",
           `Qwik PWA v${ctx.version}`,
           "ERROR: No image provided for assets generator",
-        ].join("\n"),
+        ].join("\n")
       );
       return;
     }
@@ -250,7 +251,7 @@ async function loadAssetsGeneratorContext(
           "",
           `Qwik PWA v${ctx.version}`,
           "ERROR: Only one image is supported for assets generator",
-        ].join("\n"),
+        ].join("\n")
       );
       return;
     }
@@ -323,7 +324,7 @@ async function loadAssetsGeneratorContext(
 async function readManifestFile({ options, viteConfig }: QwikPWAContext) {
   const manifestFile = resolve(
     viteConfig.publicDir ?? "public",
-    options.webManifestFilename,
+    options.webManifestFilename
   );
   const isFile = await lstat(manifestFile)
     .then((stat) => stat.isFile())
@@ -333,7 +334,11 @@ async function readManifestFile({ options, viteConfig }: QwikPWAContext) {
   return {
     manifestFile,
     manifest: await readFile(manifestFile, { encoding: "utf-8" }).then(
-      JSON.parse,
+      JSON.parse
     ),
   };
 }
+
+export type AssetsContext = Awaited<
+  ReturnType<typeof loadAssetsGeneratorContext>
+>;

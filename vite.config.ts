@@ -13,7 +13,7 @@ export default defineConfig({
   build: {
     target: "es2020",
     lib: {
-      entry: ["./src/index.ts", "./src/sw.ts"],
+      entry: ["./src/index.ts", "./src/sw.ts", "./src/head.ts"],
       formats: ["es", "cjs"],
       fileName: (format, entryName) =>
         `${entryName}.qwik.${format === "es" ? "mjs" : "cjs"}`,
@@ -22,6 +22,7 @@ export default defineConfig({
       // externalize deps that shouldn't be bundled into the library
       external: [
         "fast-glob",
+        "virtual:qwik-pwa/head",
         ...excludeAll(builtinModules),
         ...builtinModules,
         /^node:.*/,

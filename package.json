@@ -23,7 +23,9 @@
       "types": "./lib-types/index.d.ts"
     },
     "./head": {
-      "types": "./head.d.ts"
+      "import": "./dist/head.qwik.mjs",
+      "require": "./dist/head.qwik.cjs",
+      "types": "./lib-types/head.d.ts"
     },
     "./sw": {
       "import": "./dist/sw.qwik.mjs",

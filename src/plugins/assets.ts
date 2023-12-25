@@ -17,7 +17,7 @@ export default function AssetsPlugin(ctx: QwikPWAContext): Plugin {
         const assets = await ctx.assets;
         return (
           assets?.resolveHtmlLinks(DEV_RELOAD_PAGE_NAME) ??
-          `export const link = [];
+          `export const links = [];
 export const meta = [];
 `
         );
@@ -82,7 +82,7 @@ export const meta = [];
         res.setHeader("Content-Length", buffer.length);
         res.setHeader(
           "Last-Modified",
-          new Date(icon.lastModified).toUTCString(),
+          new Date(icon.lastModified).toUTCString()
         );
         res.statusCode = 200;
         res.end(buffer);

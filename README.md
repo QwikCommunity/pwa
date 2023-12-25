@@ -23,7 +23,9 @@ export default defineConfig(() => {
       qwikCity(),
       qwikVite(),
       // The options are set by default
-      qwikPwa({ /* options */ }),
+      qwikPwa({
+        /* options */
+      }),
     ],
   };
 });
@@ -47,14 +49,14 @@ addEventListener("activate", () => self.clients.claim());
 
 ```tsx
 // PWA compatible generated icons for different browsers
-import { link, meta } from "virtual:qwik-pwa/head";
+import * as pwaHead from "@qwikdev/pwa/head";
 
 export const RouterHead = component$(() => {
     ...
-      {meta.map((l) => (
+      {pwaHead.meta.map((l) => (
         <meta key={l.key} {...l} />
       ))}
-      {link.map((l) => (
+      {pwaHead.links.map((l) => (
         <link key={l.key} {...l} />
       ))}
     ...
