@@ -23,13 +23,15 @@ export const meta = [];
       }
     },
     buildStart() {
-      // add web manifest to watcher, so we can reload the page when it changes
-      this.addWatchFile(ctx.webManifestUrl);
+      // add web manifest to watcher, and so we can reload the page when it changes
+      ctx.userOptions.overrideManifestIcons &&
+        this.addWatchFile(ctx.webManifestUrl);
     },
     async handleHotUpdate({ file, server }) {
       const assetsGenerator = await ctx.assets;
+      // will handle web manifest and pwa assets generator config files changes
       if (await assetsGenerator?.checkHotUpdate(file)) {
-        // just send full page reload to load new assets
+        // send full page reload to load new assets
         server.ws.send({ type: "full-reload" });
         return [];
       }
@@ -39,13 +41,14 @@ export const meta = [];
         const url = req.url;
         if (!url) return next();
 
+        // early return if not a pwa asset
         if (url !== ctx.webManifestUrl && !/\.(ico|png|svg|webp)$/.test(url))
           return next();
 
         const assetsGenerator = await ctx.assets;
         if (!assetsGenerator) return next();
 
-        // will handle pwa icons and web manifest (when )
+        // will handle pwa icons and web manifest (only when pwa icons injection enabled)
         const asset = await assetsGenerator.findPWAAsset(url);
         if (!asset) return next();
 
