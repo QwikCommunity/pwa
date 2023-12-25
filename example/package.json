@@ -37,8 +37,5 @@
     "vite": "^4.4.11",
     "vite-tsconfig-paths": "^4.2.1",
     "@qwikdev/pwa": "workspace:../"
-  },
-  "dependencies": {
-    "vite-plugin-pwa": "^0.16.7"
   }
 }

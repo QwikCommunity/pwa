@@ -6,6 +6,8 @@ import ClientPlugin from "./plugins/client";
 import SSRPlugin from "./plugins/ssr";
 import AssetsPlugin from "./plugins/assets";
 
+export * from "./types";
+
 export function qwikPwa(
   options: PWAOptions = { preset: "minimal-2023" },
 ): Plugin[] {
