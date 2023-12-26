@@ -15,7 +15,7 @@ export default function AssetsPlugin(ctx: QwikPWAContext): Plugin {
       if (id === RESOLVED_VIRTUAL) {
         const assets = await ctx.assets;
         return (
-          assets?.resolveHtmlLinks() ??
+          (await assets?.resolveHtmlLinks()) ??
           `export const links = [];
 export const meta = [];
 `

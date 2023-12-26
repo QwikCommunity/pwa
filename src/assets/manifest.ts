@@ -4,15 +4,9 @@ import { lstat, readFile, writeFile } from "node:fs/promises";
 import type { ImageAssetsInstructions } from "@vite-pwa/assets-generator/api";
 import { generateManifestIconsEntry } from "@vite-pwa/assets-generator/api/generate-manifest-icons-entry";
 import type { AssetsGeneratorContext } from "./types";
-import type { ResolvedConfig } from "vite";
 
-export async function readManifestFile({
-  options,
-  viteConfig,
-}: QwikPWAContext) {
-  return await readWebManifestFile(
-    resolveWebManifestFile(viteConfig, options.webManifestFilename),
-  );
+export async function readManifestFile(ctx: QwikPWAContext) {
+  return await readWebManifestFile(resolveWebManifestFile(ctx));
 }
 
 export async function injectWebManifestIcons(
@@ -50,11 +44,8 @@ export async function overrideWebManifestIcons(manifestFile: string) {
   return !!manifest?.manifest && !("icons" in manifest.manifest);
 }
 
-function resolveWebManifestFile(
-  viteConfig: ResolvedConfig,
-  manifestFile: string,
-) {
-  return resolve(viteConfig.publicDir ?? "public", manifestFile);
+function resolveWebManifestFile(ctx: QwikPWAContext) {
+  return resolve(ctx.publicDir, ctx.options.webManifestFilename);
 }
 
 async function readWebManifestFile(manifestFile: string) {

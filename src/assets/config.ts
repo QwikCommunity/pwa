@@ -79,7 +79,7 @@ export async function loadAssetsGeneratorContext(
 
   const useImage = Array.isArray(images) ? images[0] : images;
   const imageFile = resolve(root, useImage);
-  const publicDir = resolve(root, ctx.viteConfig.publicDir ?? "public");
+  const publicDir = resolve(root, ctx.publicDir);
   const outDir = ctx.clientOutBaseDir;
   const imageName = relative(publicDir, imageFile);
   const imageOutDir = dirname(resolve(outDir, imageName));
