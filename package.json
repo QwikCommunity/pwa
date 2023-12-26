@@ -89,7 +89,7 @@
     "qwik": "qwik"
   },
   "dependencies": {
-    "@vite-pwa/assets-generator": "^0.2.1",
+    "@vite-pwa/assets-generator": "^0.2.2",
     "fast-glob": "^3.3.2"
   },
   "devDependencies": {
