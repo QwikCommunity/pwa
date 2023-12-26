@@ -23,7 +23,9 @@ export default defineConfig(() => {
       qwikCity(),
       qwikVite(),
       // The options are set by default
-      qwikPwa({ orientation: "portrait", icon: "./public/favicon.svg" }),
+      qwikPwa({
+        /* options */
+      }),
     ],
   };
 });
@@ -47,17 +49,22 @@ addEventListener("activate", () => self.clients.claim());
 
 ```tsx
 // PWA compatible generated icons for different browsers
-import iconsLinks from "@qwikdev/pwa/icons-entry";
+import * as pwaHead from "@qwikdev/pwa/head";
 
 export const RouterHead = component$(() => {
     ...
-      {iconsLinks.map((l) => (
+      {pwaHead.meta.map((l) => (
+        <meta key={l.key} {...l} />
+      ))}
+      {pwaHead.links.map((l) => (
         <link key={l.key} {...l} />
       ))}
     ...
 ```
 
 Make sure you remove the `<link rel="icon" type="image/svg+xml" href="/favicon.svg" />` line in your router-head file.
+
+You will need to add `@qwilkdev/pwa/head` to your `tsconfig.json` file in the `compilerOptions.types` option.
 
 Now your application is PWA-friendly.
 
