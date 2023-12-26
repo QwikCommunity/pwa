@@ -1,6 +1,6 @@
 import type { Plugin } from "vite";
 import { createContext } from "./context";
-import { PWAOptions } from "./types";
+import type { PWAOptions } from "./types";
 import MainPlugin from "./plugins/main";
 import ClientPlugin from "./plugins/client";
 import SSRPlugin from "./plugins/ssr";

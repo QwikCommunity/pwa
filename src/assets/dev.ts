@@ -27,7 +27,7 @@ export async function findPWAAsset(
         manifest,
         assetsContext.assetsInstructions,
       ),
-      lastModified: assetsContext.lastModified,
+      lastModified: Date.now(),
       age: 0,
     } satisfies ResolvedPWAAsset;
     assetsContext.cache.set(path, resolved);

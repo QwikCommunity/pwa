@@ -88,6 +88,8 @@ export async function loadAssetsGeneratorContext(
   const assetsInstructions = await instructions({
     imageResolver: () => readFile(resolve(root, useImage)),
     imageName,
+    // for custom dark apple splash screens image source
+    originalName: useImage,
     preset,
     faviconPreset: userHeadLinkOptions?.preset,
     htmlLinks: { xhtml, includeId },
