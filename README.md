@@ -33,16 +33,34 @@ export default defineConfig(() => {
 
 `src/routes/service-worker.ts`:
 
+```diff
+import { setupServiceWorker } from "@builder.io/qwik-city/service-worker";
+import { setupPwa } from "@qwikdev/pwa/sw";
+
+setupServiceWorker();
+
++setupPwa();
+
+- addEventListener("install", () => self.skipWaiting());
+
+- addEventListener("activate", () => self.clients.claim());
+
+- declare const self: ServiceWorkerGlobalScope;
+```
+
+By default, your application will be auto-updated when there's a new version of the service worker available and it is installed: in a future version, you will be able to customize this behavior to use `prompt` for update:
 ```ts
 import { setupServiceWorker } from "@builder.io/qwik-city/service-worker";
 import { setupPwa } from "@qwikdev/pwa/sw";
 
 setupServiceWorker();
-setupPwa();
+setupPwa("prompt");
+```
 
-addEventListener("install", () => self.skipWaiting());
-
-addEventListener("activate", () => self.clients.claim());
+`public/manifest.json`:
+```diff
+"background_color": "#fff",
++ "theme_color": "#fff",
 ```
 
 `src/components/router-head/router-head.tsx`:
@@ -64,7 +82,7 @@ export const RouterHead = component$(() => {
 
 Make sure you remove the `<link rel="icon" type="image/svg+xml" href="/favicon.svg" />` line in your router-head file.
 
-You will need to add `@qwilkdev/pwa/head` to your `tsconfig.json` file in the `compilerOptions.types` option.
+You will need to add `@qwilkdev/pwa` to your `tsconfig.json` file in the `compilerOptions.types` option.
 
 Now your application is PWA-friendly.
 

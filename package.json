@@ -2,7 +2,7 @@
   "name": "@qwikdev/pwa",
   "type": "module",
   "version": "0.0.1",
-  "packageManager": "pnpm@8.12.1",
+  "packageManager": "pnpm@8.13.1",
   "description": "Qwik PWA",
   "homepage": "https://github.com/QwikDev/pwa#readme",
   "repository": {
@@ -105,7 +105,7 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^3.0.3",
     "rimraf": "^5.0.5",
-    "typescript": "^5.2.2",
+    "typescript": "^5.3.3",
     "ultrahtml": "^1.5.2",
     "undici": "^5.26.0",
     "vite": "^4.4.11",

@@ -3,7 +3,3 @@ import { setupPwa } from "@qwikdev/pwa/sw";
 
 setupServiceWorker();
 setupPwa();
-
-addEventListener("install", () => self.skipWaiting());
-
-addEventListener("activate", () => self.clients.claim());

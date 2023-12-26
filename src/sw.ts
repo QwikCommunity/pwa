@@ -23,7 +23,16 @@ function urlsToEntries(urls: string[], hash: string): PrecacheEntry[] {
   });
 }
 
-export function setupPwa() {
+/**
+ * Add PWA capabilities.
+ *
+ * **WARNING**: "prompt" mode not available yet.
+ *
+ * @param mode
+ * @default "auto-update"
+ */
+export function setupPwa(mode: "auto-update" | "prompt" = "auto-update") {
+  console.info(`Qwik PWA v${version}, using ${mode} strategy`);
   const noParamRoutes = routes.filter((r) => !r.hasParams);
   const paramRoutes = routes.filter((r) => r.hasParams);
   cleanupOutdatedCaches();
@@ -49,6 +58,19 @@ export function setupPwa() {
     registerRoute(route.pattern, new StaleWhileRevalidate());
   }
 
+  if (mode === "prompt") {
+    console.warn(
+      `Qwik PWA v${version}\nWARNING: "prompt" mode not available yet`,
+    );
+    /*
+    self.addEventListener("message", (event) => {
+      if (event.data.type === "SKIP_WAITING") {
+        self.skipWaiting();
+      }
+    });
+    */
+  }
+  // else {
   // Skip-Waiting Service Worker-based solution
   self.addEventListener("activate", async () => {
     // after we've taken over, iterate over all the current clients (windows)
@@ -58,8 +80,8 @@ export function setupPwa() {
       client.navigate(client.url);
     });
   });
-
   self.skipWaiting();
+  // }
 
   const base = "/build/"; // TODO: it should be dynamic based on the build
   const qprefetchEvent = new MessageEvent<ServiceWorkerMessage>("message", {
@@ -74,6 +96,7 @@ export function setupPwa() {
   self.dispatchEvent(qprefetchEvent);
 }
 
+declare const version: string;
 declare const appBundles: AppBundle[];
 
 declare const publicDirAssets: string[];
