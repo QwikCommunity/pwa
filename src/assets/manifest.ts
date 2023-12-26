@@ -4,26 +4,15 @@ import { lstat, readFile, writeFile } from "node:fs/promises";
 import type { ImageAssetsInstructions } from "@vite-pwa/assets-generator/api";
 import { generateManifestIconsEntry } from "@vite-pwa/assets-generator/api/generate-manifest-icons-entry";
 import type { AssetsGeneratorContext } from "./types";
+import type { ResolvedConfig } from "vite";
 
 export async function readManifestFile({
   options,
   viteConfig,
 }: QwikPWAContext) {
-  const manifestFile = resolve(
-    viteConfig.publicDir ?? "public",
-    options.webManifestFilename,
+  return await readWebManifestFile(
+    resolveWebManifestFile(viteConfig, options.webManifestFilename),
   );
-  const isFile = await lstat(manifestFile)
-    .then((stat) => stat.isFile())
-    .catch(() => false);
-  if (!isFile) return;
-
-  return {
-    manifestFile,
-    manifest: await readFile(manifestFile, { encoding: "utf-8" }).then(
-      JSON.parse,
-    ),
-  };
 }
 
 export async function injectWebManifestIcons(
@@ -53,4 +42,31 @@ export async function writeWebManifest(
     buffer,
     "utf-8",
   );
+}
+
+export async function overrideWebManifestIcons(manifestFile: string) {
+  const manifest = await readWebManifestFile(manifestFile);
+
+  return !!manifest?.manifest && !("icons" in manifest.manifest);
+}
+
+function resolveWebManifestFile(
+  viteConfig: ResolvedConfig,
+  manifestFile: string,
+) {
+  return resolve(viteConfig.publicDir ?? "public", manifestFile);
+}
+
+async function readWebManifestFile(manifestFile: string) {
+  const isFile = await lstat(manifestFile)
+    .then((stat) => stat.isFile())
+    .catch(() => false);
+  if (!isFile) return;
+
+  return {
+    manifestFile,
+    manifest: await readFile(manifestFile, { encoding: "utf-8" }).then(
+      JSON.parse,
+    ),
+  };
 }

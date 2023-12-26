@@ -79,6 +79,8 @@ export interface PWAOptions {
    *
    * With this option enabled, the plugin will add the icons entry to your web manifest file.
    *
+   * If your web manifest file already contains the icons entry, the plugin will ignore this option.
+   *
    * @default true
    */
   overrideManifestIcons?: boolean;

@@ -4,6 +4,7 @@ import type { AssetsGeneratorContext, ResolvedPWAAsset } from "./types";
 import { basename, dirname, relative, resolve } from "node:path";
 import { instructions } from "@vite-pwa/assets-generator/api/instructions";
 import { readFile } from "node:fs/promises";
+import { overrideWebManifestIcons } from "./manifest";
 
 async function loadConfiguration(root: string, ctx: QwikPWAContext) {
   if (ctx.options.config === false) {
@@ -105,8 +106,12 @@ export async function loadAssetsGeneratorContext(
     includeWebManifest,
     includeHtmlHeadLinks,
     includeThemeColor,
-    overrideManifestIcons,
+    overrideManifestIcons: useOverrideManifestIcons,
   } = ctx.options;
+
+  const overrideManifestIcons = useOverrideManifestIcons
+    ? await overrideWebManifestIcons(resolvedWebManifestFile)
+    : false;
 
   if (assetContext === undefined) {
     return {

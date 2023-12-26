@@ -62,6 +62,7 @@ export async function resolveHtmlLinks(
   assetsContext: AssetsGeneratorContext,
 ) {
   const header = await resolveDevHtmlAssets(ctx, assetsContext);
+  console.log("header", header);
   return `export const links = ${JSON.stringify(header.link)};
 export const meta = ${JSON.stringify(header.meta)};
 `;
