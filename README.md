@@ -63,6 +63,11 @@ setupPwa("prompt");
 + "theme_color": "#fff",
 ```
 
+For more information, check the following pages:
+- [PWA Minimal Icons Requirements](https://vite-pwa-org.netlify.app/assets-generator/#pwa-minimal-icons-requirements)
+- [PWA Minimal Requirements](https://vite-pwa-org.netlify.app/guide/pwa-minimal-requirements.html)
+- [Add a web app manifest](https://web.dev/articles/add-manifest)
+
 `src/components/router-head/router-head.tsx`:
 
 ```tsx
@@ -81,8 +86,6 @@ export const RouterHead = component$(() => {
 ```
 
 Make sure you remove the `<link rel="icon" type="image/svg+xml" href="/favicon.svg" />` line in your router-head file.
-
-You will need to add `@qwilkdev/pwa` to your `tsconfig.json` file in the `compilerOptions.types` option.
 
 Now your application is PWA-friendly.
 
