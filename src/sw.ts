@@ -19,7 +19,8 @@ function urlsToEntries(urls: string[], hash: string): PrecacheEntry[] {
   const matcher = /^build\/q-/;
   return urls.map((url) => {
     const match = url.match(matcher);
-    return match ? { url } : { url, revision: hash };
+    // use null revision, removing the revision or using undefined will cause workbox warnings in runtime
+    return match ? { url, revision: null } : { url, revision: hash };
   });
 }
 
@@ -32,7 +33,10 @@ function urlsToEntries(urls: string[], hash: string): PrecacheEntry[] {
  * @default "auto-update"
  */
 export function setupPwa(mode: "auto-update" | "prompt" = "auto-update") {
-  console.info(`Qwik PWA v${version}, using ${mode} strategy`);
+  if (import.meta.env.DEV) {
+    console.info(`Qwik PWA v${version}, using ${mode} strategy`);
+  }
+
   const noParamRoutes = routes.filter((r) => !r.hasParams);
   const paramRoutes = routes.filter((r) => r.hasParams);
   cleanupOutdatedCaches();
@@ -59,9 +63,11 @@ export function setupPwa(mode: "auto-update" | "prompt" = "auto-update") {
   }
 
   if (mode === "prompt") {
-    console.warn(
-      `Qwik PWA v${version}\nWARNING: "prompt" mode not available yet`,
-    );
+    if (import.meta.env.DEV) {
+      console.warn(
+        `Qwik PWA v${version}\nWARNING: "prompt" mode not available yet`,
+      );
+    }
     /*
     self.addEventListener("message", (event) => {
       if (event.data.type === "SKIP_WAITING") {
