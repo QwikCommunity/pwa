@@ -1,4 +1,4 @@
-import { injectWebManifestIcons, readManifestFile } from "./manifest";
+import { injectWebManifestEntries, readManifestFile } from "./manifest";
 import type { AssetsGeneratorContext, ResolvedPWAAsset } from "./types";
 import type { QwikPWAContext } from "../context";
 import { loadAssetsGeneratorContext } from "./config";
@@ -21,7 +21,7 @@ export async function findPWAAsset(
     resolved = {
       path,
       mimeType: "application/manifest+json",
-      buffer: injectWebManifestIcons(
+      buffer: injectWebManifestEntries(
         ctx,
         manifest,
         assetsContext.assetsInstructions,

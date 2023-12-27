@@ -9,17 +9,16 @@ export async function readManifestFile(ctx: QwikPWAContext) {
   return await readWebManifestFile(resolveWebManifestFile(ctx));
 }
 
-export async function injectWebManifestIcons(
+export async function injectWebManifestEntries(
   ctx: QwikPWAContext,
   manifest: any,
   assetsInstructions: ImageAssetsInstructions,
 ) {
   if (ctx.options.overrideManifestIcons) {
-    const icons = generateManifestIconsEntry(
+    manifest.icons = generateManifestIconsEntry(
       "object",
       assetsInstructions,
     ).icons;
-    Object.assign(manifest, { icons });
   }
 
   if (!("id" in manifest)) {
@@ -28,6 +27,16 @@ export async function injectWebManifestIcons(
 
   if (!("scope" in manifest)) {
     manifest.scope = ctx.basePathRelDir || "/";
+  }
+
+  if (!("theme_color" in manifest)) {
+    console.warn(
+      [
+        "",
+        `Qwik PWA v${ctx.version}`,
+        '"theme_color" is missing from the web manifest, your application will not be able to be installed',
+      ].join("\n"),
+    );
   }
 
   return Buffer.from(JSON.stringify(manifest, undefined, 2));
@@ -39,12 +48,12 @@ export async function writeWebManifest(
 ) {
   const manifest = await readManifestFile(ctx);
   if (!manifest) return;
-  const buffer = await injectWebManifestIcons(
+
+  const buffer = await injectWebManifestEntries(
     ctx,
     manifest,
     assetContext.assetsInstructions,
   );
-
   await writeFile(
     resolve(ctx.clientOutBaseDir, ctx.options.webManifestFilename),
     buffer,
