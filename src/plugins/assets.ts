@@ -24,8 +24,7 @@ export const meta = [];
     },
     buildStart() {
       // add web manifest to watcher, and so we can reload the page when it changes
-      ctx.userOptions.overrideManifestIcons &&
-        this.addWatchFile(ctx.webManifestUrl);
+      this.addWatchFile(ctx.webManifestUrl);
     },
     async handleHotUpdate({ file, server }) {
       const assetsGenerator = await ctx.assets;

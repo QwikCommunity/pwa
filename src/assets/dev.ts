@@ -15,8 +15,6 @@ export async function findPWAAsset(
   }
 
   if (path === ctx.webManifestUrl) {
-    if (!ctx.options.overrideManifestIcons) return;
-
     const manifest = await readManifestFile(ctx);
     if (!manifest) return;
 
@@ -24,6 +22,7 @@ export async function findPWAAsset(
       path,
       mimeType: "application/manifest+json",
       buffer: injectWebManifestIcons(
+        ctx,
         manifest,
         assetsContext.assetsInstructions,
       ),
@@ -48,7 +47,7 @@ export async function findPWAAsset(
       path,
       mimeType: iconAsset.mimeType,
       buffer: iconAsset.buffer(),
-      lastModified: assetsContext.lastModified,
+      lastModified: Date.now(),
       age: 0,
     } satisfies ResolvedPWAAsset;
     assetsContext.cache.set(path, resolved);
@@ -63,10 +62,6 @@ export async function checkHotUpdate(
 ) {
   // watch web manifest changes
   if (file === assetsContext.resolvedWebManifestFile) {
-    // when no web manifest icons injection,
-    // just let Vite do its work
-    // will reload the page or send hmr in src/root.tsx
-    if (!ctx.options.overrideManifestIcons) return false;
     assetsContext.cache.delete(ctx.webManifestUrl);
     return true;
   }

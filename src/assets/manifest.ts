@@ -10,23 +10,37 @@ export async function readManifestFile(ctx: QwikPWAContext) {
 }
 
 export async function injectWebManifestIcons(
+  ctx: QwikPWAContext,
   manifest: any,
   assetsInstructions: ImageAssetsInstructions,
 ) {
-  const icons = generateManifestIconsEntry("object", assetsInstructions).icons;
-  return Buffer.from(
-    JSON.stringify(Object.assign(manifest.manifest, { icons }), undefined, 2),
-  );
+  if (ctx.options.overrideManifestIcons) {
+    const icons = generateManifestIconsEntry(
+      "object",
+      assetsInstructions,
+    ).icons;
+    Object.assign(manifest, { icons });
+  }
+
+  if (!("id" in manifest)) {
+    manifest.id = ctx.basePathRelDir || "/";
+  }
+
+  if (!("scope" in manifest)) {
+    manifest.scope = ctx.basePathRelDir || "/";
+  }
+
+  return Buffer.from(JSON.stringify(manifest, undefined, 2));
 }
 
 export async function writeWebManifest(
   ctx: QwikPWAContext,
   assetContext: AssetsGeneratorContext,
 ) {
-  if (!ctx.options.overrideManifestIcons) return;
   const manifest = await readManifestFile(ctx);
   if (!manifest) return;
   const buffer = await injectWebManifestIcons(
+    ctx,
     manifest,
     assetContext.assetsInstructions,
   );
@@ -41,7 +55,7 @@ export async function writeWebManifest(
 export async function overrideWebManifestIcons(manifestFile: string) {
   const manifest = await readWebManifestFile(manifestFile);
 
-  return !!manifest?.manifest && !("icons" in manifest.manifest);
+  return !!manifest && !("icons" in manifest);
 }
 
 function resolveWebManifestFile(ctx: QwikPWAContext) {
@@ -54,10 +68,5 @@ async function readWebManifestFile(manifestFile: string) {
     .catch(() => false);
   if (!isFile) return;
 
-  return {
-    manifestFile,
-    manifest: await readFile(manifestFile, { encoding: "utf-8" }).then(
-      JSON.parse,
-    ),
-  };
+  return JSON.parse(await readFile(manifestFile, { encoding: "utf-8" }));
 }
