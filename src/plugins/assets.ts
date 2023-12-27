@@ -29,8 +29,23 @@ export const meta = [];
     async handleHotUpdate({ file, server }) {
       const assetsGenerator = await ctx.assets;
       // will handle web manifest and pwa assets generator config files changes
-      if (await assetsGenerator?.checkHotUpdate(file)) {
-        // send full page reload to load new assets
+      const change = await assetsGenerator?.checkHotUpdate(file);
+      if (change) {
+        if (change === "webmanifest") {
+          // send full page reload to load web manifest again
+          server.ws.send({ type: "full-reload" });
+          return [];
+        }
+
+        // pwa assets configuration change:
+        // - invalidate resolved virtual module or
+        // - send full page reload if resolved virtual module is not found
+        const resolvedVirtual =
+          server.moduleGraph.getModuleById(RESOLVED_VIRTUAL);
+        if (resolvedVirtual) {
+          return [resolvedVirtual];
+        }
+
         server.ws.send({ type: "full-reload" });
         return [];
       }

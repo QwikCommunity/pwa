@@ -63,12 +63,12 @@ export async function checkHotUpdate(
   // watch web manifest changes
   if (file === assetsContext.resolvedWebManifestFile) {
     assetsContext.cache.delete(ctx.webManifestUrl);
-    return true;
+    return "webmanifest";
   }
 
   // watch pwa assets configuration file
   const result = assetsContext.sources.includes(file);
   if (result) await loadAssetsGeneratorContext(ctx, assetsContext);
 
-  return result;
+  return result ? "configuration" : undefined;
 }

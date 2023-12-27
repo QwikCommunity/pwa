@@ -4,6 +4,8 @@ import { qwikCity } from "@builder.io/qwik-city/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { qwikPwa } from "@qwikdev/pwa";
 
+const config = process.env.CUSTOM_CONFIG === "true"
+
 export default defineConfig(() => {
   return {
     define: {
@@ -14,7 +16,7 @@ export default defineConfig(() => {
       qwikCity(),
       qwikVite(),
       tsconfigPaths(),
-      qwikPwa()
+      qwikPwa({ config })
     ],
     preview: {
       headers: {
