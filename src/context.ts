@@ -58,7 +58,7 @@ export function initializeContext(
     (p) => p.name === "vite-plugin-qwik-city",
   ) as QwikCityPlugin;
   ctx.target = ctx.qwikPlugin!.api.getOptions().target;
-  ctx.publicDir = viteConfig.publicDir;
+  ctx.publicDir = viteConfig.publicDir || "public";
   ctx.clientOutDir = ctx.qwikPlugin!.api.getClientOutDir()!;
   ctx.basePathRelDir = ctx
     .qwikCityPlugin!.api.getBasePathname()

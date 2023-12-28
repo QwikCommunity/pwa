@@ -16,10 +16,9 @@
     "isolatedModules": true,
     "outDir": "tmp",
     "noEmit": true,
-    "types": ["node", "vite/client"],
+    "types": ["node", "vite/client", "@qwikdev/pwa"],
     "paths": {
-      "~/*": ["./src/*"],
-      "@qwikdev/pwa/*": ["../lib-types/*"]
+      "~/*": ["./src/*"]
     }
   },
   "files": ["./.eslintrc.cjs"],

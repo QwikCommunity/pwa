@@ -13,10 +13,10 @@ export async function resolveDevHtmlAssets(
   };
   if (assetsContext.includeThemeColor) {
     const manifest = await readManifestFile(ctx);
-    if (manifest && "theme_color" in manifest.manifest)
+    if (manifest && "theme_color" in manifest)
       header.meta.push({
         key: "theme-color",
-        content: manifest.manifest.theme_color,
+        content: manifest.theme_color,
         name: "theme-color",
       });
   }

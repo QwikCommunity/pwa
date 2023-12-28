@@ -26,7 +26,9 @@ export interface PWAAssetsGenerator {
   resolveHtmlLinks(): Promise<string>;
   resolveDevHtmlAssets(): Promise<DevHtmlAssets>;
   resolveSWPrecachingAssets(): string[];
-  checkHotUpdate(path: string): Promise<boolean>;
+  checkHotUpdate(
+    path: string,
+  ): Promise<"webmanifest" | "configuration" | undefined>;
 }
 
 export interface AssetsGeneratorContext {

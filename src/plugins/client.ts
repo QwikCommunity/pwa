@@ -24,6 +24,7 @@ export default function ClientPlugin(ctx: QwikPWAContext): Plugin {
         const routes = ctx.qwikCityPlugin.api.getRoutes();
         const swCode = await fs.readFile(ctx.swClientDistPath, "utf-8");
         const swCodeUpdate = `
+        const version = ${JSON.stringify(ctx.version)};
         const publicDirAssets = ${JSON.stringify(publicDirAssets)};
         const emittedAssets = ${JSON.stringify([
           ...generatedAssetsUrls,

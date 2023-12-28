@@ -1,4 +1,4 @@
-import { injectWebManifestIcons, readManifestFile } from "./manifest";
+import { injectWebManifestEntries, readManifestFile } from "./manifest";
 import type { AssetsGeneratorContext, ResolvedPWAAsset } from "./types";
 import type { QwikPWAContext } from "../context";
 import { loadAssetsGeneratorContext } from "./config";
@@ -15,15 +15,14 @@ export async function findPWAAsset(
   }
 
   if (path === ctx.webManifestUrl) {
-    if (!ctx.options.overrideManifestIcons) return;
-
     const manifest = await readManifestFile(ctx);
     if (!manifest) return;
 
     resolved = {
       path,
       mimeType: "application/manifest+json",
-      buffer: injectWebManifestIcons(
+      buffer: injectWebManifestEntries(
+        ctx,
         manifest,
         assetsContext.assetsInstructions,
       ),
@@ -48,7 +47,7 @@ export async function findPWAAsset(
       path,
       mimeType: iconAsset.mimeType,
       buffer: iconAsset.buffer(),
-      lastModified: assetsContext.lastModified,
+      lastModified: Date.now(),
       age: 0,
     } satisfies ResolvedPWAAsset;
     assetsContext.cache.set(path, resolved);
@@ -63,17 +62,13 @@ export async function checkHotUpdate(
 ) {
   // watch web manifest changes
   if (file === assetsContext.resolvedWebManifestFile) {
-    // when no web manifest icons injection,
-    // just let Vite do its work
-    // will reload the page or send hmr in src/root.tsx
-    if (!ctx.options.overrideManifestIcons) return false;
     assetsContext.cache.delete(ctx.webManifestUrl);
-    return true;
+    return "webmanifest";
   }
 
   // watch pwa assets configuration file
   const result = assetsContext.sources.includes(file);
   if (result) await loadAssetsGeneratorContext(ctx, assetsContext);
 
-  return result;
+  return result ? "configuration" : undefined;
 }
