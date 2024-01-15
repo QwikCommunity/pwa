@@ -12,7 +12,9 @@ import {
   setDefaultHandler,
 } from "workbox-routing";
 
-export const assets = [...publicDirAssets, ...emittedAssets].filter((asset) => !excludeAssets.includes(asset));
+export const assets = [...publicDirAssets, ...emittedAssets].filter(
+  (asset) => !excludeAssets.includes(asset),
+);
 export { routes };
 
 function urlsToEntries(urls: string[], hash: string): PrecacheEntry[] {
@@ -26,15 +28,14 @@ function urlsToEntries(urls: string[], hash: string): PrecacheEntry[] {
 
 /**
  * Add PWA capabilities.
- *
- * **WARNING**: "prompt" mode not available yet.
- *
- * @param mode
- * @default "auto-update"
  */
-export function setupPwa(mode: "auto-update" | "prompt" = "auto-update") {
+export function setupPwa() {
   if (import.meta.env.DEV) {
-    console.info(`Qwik PWA v${version}, using ${mode} strategy`);
+    console.info(
+      `Qwik PWA v${version}, using ${
+        prompt ? "prompt-for-update" : "auto-update"
+      } strategy`,
+    );
   }
 
   const noParamRoutes = routes.filter((r) => !r.hasParams);
@@ -62,32 +63,30 @@ export function setupPwa(mode: "auto-update" | "prompt" = "auto-update") {
     registerRoute(route.pattern, new StaleWhileRevalidate());
   }
 
-  if (mode === "prompt") {
-    if (import.meta.env.DEV) {
-      console.warn(
-        `Qwik PWA v${version}\nWARNING: "prompt" mode not available yet`,
-      );
-    }
-    /*
+  if (prompt) {
+    // if (import.meta.env.DEV) {
+    //   console.warn(
+    //     `Qwik PWA v${version}\nWARNING: "prompt" mode not available yet`,
+    //   );
+    // }
+
     self.addEventListener("message", (event) => {
       if (event.data.type === "SKIP_WAITING") {
         self.skipWaiting();
       }
     });
-    */
-  }
-  // else {
-  // Skip-Waiting Service Worker-based solution
-  self.addEventListener("activate", async () => {
-    // after we've taken over, iterate over all the current clients (windows)
-    const clients = await self.clients.matchAll({ type: "window" });
-    clients.forEach((client) => {
-      // ...and refresh each one of them
-      client.navigate(client.url);
+  } else {
+    // Skip-Waiting Service Worker-based solution
+    self.addEventListener("activate", async () => {
+      // after we've taken over, iterate over all the current clients (windows)
+      const clients = await self.clients.matchAll({ type: "window" });
+      clients.forEach((client) => {
+        // ...and refresh each one of them
+        client.navigate(client.url);
+      });
     });
-  });
-  self.skipWaiting();
-  // }
+    self.skipWaiting();
+  }
 
   const base = "/build/"; // TODO: it should be dynamic based on the build
   const qprefetchEvent = new MessageEvent<ServiceWorkerMessage>("message", {
@@ -103,6 +102,7 @@ export function setupPwa(mode: "auto-update" | "prompt" = "auto-update") {
 }
 
 declare const version: string;
+declare const prompt: boolean;
 declare const appBundles: AppBundle[];
 
 declare const excludeAssets: string[];

@@ -92,4 +92,10 @@ export interface PWAOptions {
    * @default false
    */
   includeWebManifest?: boolean;
+  /**
+   *
+   *
+   * @default false
+   */
+  promptForUpdate?: boolean;
 }

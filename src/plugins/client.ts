@@ -26,6 +26,7 @@ export default function ClientPlugin(ctx: QwikPWAContext): Plugin {
         const swCodeUpdate = `
         const excludeAssets = ['_headers', '_redirects']
         const version = ${JSON.stringify(ctx.version)};
+        const prompt = ${JSON.stringify(ctx.options.promptForUpdate)};
         const publicDirAssets = ${JSON.stringify(publicDirAssets)};
         const emittedAssets = ${JSON.stringify([
           ...generatedAssetsUrls,

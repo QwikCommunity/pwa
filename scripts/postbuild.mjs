@@ -11,6 +11,12 @@ async function postBuild() {
         writeFile("./lib-types/head.d.mts", content, "utf-8"),
       ]);
     }),
+    readFile("./lib-types/prompt-for-update.d.ts", "utf-8").then((content) => {
+      return Promise.all([
+        writeFile("./lib-types/prompt-for-update.d.cts", content, "utf-8"),
+        writeFile("./lib-types/prompt-for-update.d.mts", content, "utf-8"),
+      ]);
+    }),
     readFile("./lib-types/index.d.ts", "utf-8").then((content) => {
       return Promise.all([
         writeFile("./lib-types/index.d.cts", content, "utf-8"),

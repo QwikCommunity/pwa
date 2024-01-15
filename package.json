@@ -47,6 +47,16 @@
         "default": "./lib/sw.qwik.cjs"
       }
     },
+    "./prompt-for-update": {
+      "import": {
+        "types": "./lib-types/prompt-for-update.d.mts",
+        "default": "./lib/prompt-for-update.qwik.js"
+      },
+      "require": {
+        "types": "./lib-types/prompt-for-update.d.cts",
+        "default": "./lib/prompt-for-update.qwik.cjs"
+      }
+    },
     "./*": "./*"
   },
   "main": "lib/index.qwik.js",
@@ -56,6 +66,9 @@
     "*": {
       "head": [
         "./lib-types/head.d.ts"
+      ],
+      "prompt-for-update": [
+        "./lib-types/prompt-for-update.d.ts"
       ],
       "sw": [
         "./lib-types/sw.d.ts"
