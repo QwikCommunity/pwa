@@ -44,3 +44,11 @@ export function usePromptForUpdate() {
 
   return { prompt };
 }
+
+/* can we do this in qwik?
+declare global {
+  interface Window {
+    loadNewVersion: () => void;
+  }
+}
+*/
