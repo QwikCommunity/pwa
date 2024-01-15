@@ -1,5 +1,9 @@
 import { $, useOnDocument, useSignal } from "@builder.io/qwik";
 
+// TODO: expose a new virtual for prompt configuration and add protection here:
+//  don't include useOnDocument if using auto-update
+//  the auto-update behavior will claim all clients from the sw
+
 export function usePromptForUpdate() {
   const prompt = useSignal(false);
 
@@ -45,7 +49,7 @@ export function usePromptForUpdate() {
   return { prompt };
 }
 
-/* can we do this in qwik?
+/* can we do this here in qwik?
 declare global {
   interface Window {
     loadNewVersion: () => void;
