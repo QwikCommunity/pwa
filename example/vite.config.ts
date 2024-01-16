@@ -12,6 +12,7 @@ const config: PWAOptions | undefined = process.env.CUSTOM_CONFIG === "true"
 
 export default defineConfig(() => {
   return {
+    mode: "development",
     define: {
       // enables debugging in workbox
       "process.env.NODE_ENV": JSON.stringify("development"),

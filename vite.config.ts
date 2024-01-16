@@ -28,6 +28,7 @@ export default defineConfig({
       external: [
         "fast-glob",
         "virtual:qwik-pwa/head",
+        "virtual:qwik-pwa/client-mode",
         ...excludeAll(builtinModules),
         ...builtinModules,
         /^node:.*/,
