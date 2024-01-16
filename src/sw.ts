@@ -63,31 +63,24 @@ export function setupPwa(mode: "auto-update" | "prompt" = "auto-update") {
   }
 
   if (mode === "prompt") {
-    if (import.meta.env.DEV) {
-      console.warn(
-        `Qwik PWA v${version}\nWARNING: "prompt" mode not available yet`,
-      );
-    }
-    /*
     self.addEventListener("message", (event) => {
       if (event.data.type === "SKIP_WAITING") {
         self.skipWaiting();
       }
     });
-    */
   }
-  // else {
-  // Skip-Waiting Service Worker-based solution
-  self.addEventListener("activate", async () => {
-    // after we've taken over, iterate over all the current clients (windows)
-    const clients = await self.clients.matchAll({ type: "window" });
-    clients.forEach((client) => {
-      // ...and refresh each one of them
-      client.navigate(client.url);
+  else {
+    // Skip-Waiting Service Worker-based solution
+    self.addEventListener("activate", async () => {
+      // after we've taken over, iterate over all the current clients (windows)
+      const clients = await self.clients.matchAll({ type: "window" });
+      clients.forEach((client) => {
+        // ...and refresh each one of them
+        client.navigate(client.url);
+      });
     });
-  });
-  self.skipWaiting();
-  // }
+    self.skipWaiting();
+  }
 
   const base = "/build/"; // TODO: it should be dynamic based on the build
   const qprefetchEvent = new MessageEvent<ServiceWorkerMessage>("message", {
@@ -121,10 +114,10 @@ export type AppSymbols = Map<string, string>;
 export type AppBundle =
   | [bundleName: string, importedBundleIds: number[]]
   | [
-      bundleName: string,
-      importedBundleIds: number[],
-      symbolHashesInBundle: string[],
-    ];
+    bundleName: string,
+    importedBundleIds: number[],
+    symbolHashesInBundle: string[],
+  ];
 
 export type LinkBundle = [routePattern: RegExp, bundleIds: number[]];
 

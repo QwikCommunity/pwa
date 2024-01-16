@@ -1,6 +1,7 @@
 {
   "name": "example",
   "description": "Demo App with Routing built-in (recommended)",
+  "type": "module",
   "engines": {
     "node": ">=15.0.0"
   },

@@ -47,6 +47,16 @@
         "default": "./lib/sw.qwik.cjs"
       }
     },
+    "./client": {
+      "import": {
+        "types": "./lib-types/client.d.mts",
+        "default": "./lib/client.qwik.js"
+      },
+      "require": {
+        "types": "./lib-types/client.d.cts",
+        "default": "./lib/client.qwik.cjs"
+      }
+    },
     "./*": "./*"
   },
   "main": "lib/index.qwik.js",
@@ -59,6 +69,9 @@
       ],
       "sw": [
         "./lib-types/sw.d.ts"
+      ],
+      "client": [
+        "./lib-types/client.d.ts"
       ],
       "*": [
         "./*"
