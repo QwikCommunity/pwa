@@ -4,7 +4,6 @@
   "engines": {
     "node": ">=15.0.0"
   },
-  "private": true,
   "trustedDependencies": [
     "sharp"
   ],
