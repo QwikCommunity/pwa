@@ -12,7 +12,7 @@ import {
   setDefaultHandler,
 } from "workbox-routing";
 
-export const assets = [...publicDirAssets, ...emittedAssets];
+export const assets = [...publicDirAssets, ...emittedAssets].filter((asset) => !excludeAssets.includes(asset));
 export { routes };
 
 function urlsToEntries(urls: string[], hash: string): PrecacheEntry[] {
@@ -105,6 +105,7 @@ export function setupPwa(mode: "auto-update" | "prompt" = "auto-update") {
 declare const version: string;
 declare const appBundles: AppBundle[];
 
+declare const excludeAssets: string[];
 declare const publicDirAssets: string[];
 declare const emittedAssets: string[];
 declare const routes: {

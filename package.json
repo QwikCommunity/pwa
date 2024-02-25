@@ -1,7 +1,7 @@
 {
   "name": "@qwikdev/pwa",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "packageManager": "pnpm@8.13.1",
   "description": "Qwik PWA",
   "homepage": "https://github.com/QwikDev/pwa#readme",
