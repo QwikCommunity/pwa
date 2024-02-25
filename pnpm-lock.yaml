@@ -77,6 +77,10 @@ importers:
         version: 7.0.0
 
   example:
+    dependencies:
+      '@qwikdev/pwa':
+        specifier: ^0.0.3
+        version: 0.0.3
     devDependencies:
       '@builder.io/qwik':
         specifier: ^1.2.17
@@ -84,9 +88,6 @@ importers:
       '@builder.io/qwik-city':
         specifier: ^1.2.17
         version: 1.2.19(@types/node@20.9.4)
-      '@qwikdev/pwa':
-        specifier: workspace:../
-        version: link:..
       '@types/eslint':
         specifier: ^8.44.4
         version: 8.44.7
@@ -563,6 +564,14 @@ packages:
       '@pnpm/network.ca-file': 1.0.2
       config-chain: 1.1.13
     dev: true
+
+  /@qwikdev/pwa@0.0.3:
+    resolution: {integrity: sha512-GaLw5WPqdXM+yIgVJQ4kMXgg6ablm/PKPx2GR94TW5SMkhk2RDKcc0SkAWfXgpWa9wq4LuGn/Ab+/3yWaUIZOg==}
+    engines: {node: '>=16.8.0 <18.0.0 || >=18.11'}
+    dependencies:
+      '@vite-pwa/assets-generator': 0.2.2
+      fast-glob: 3.3.2
+    dev: false
 
   /@rollup/pluginutils@5.0.5:
     resolution: {integrity: sha512-6aEYR910NyP73oHiJglti74iRyOwgFU4x3meH/H8OJx6Ry0j6cOVZ5X/wTvub7G7Ao6qaHBEaNsV3GLJkSsF+Q==}
