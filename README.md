@@ -143,3 +143,13 @@ For full PWA compatibility, you can put your [screenshots](https://developer.moz
 ```
 
 For beautiful screenshots, you can use [Progressier Screenshots Generator](https://progressier.com/pwa-screenshots-generator).
+
+### Cloudflare deployment
+
+**PNPM**
+1. Need set resolutions w/ `"sharp": "0.32.6"` on **package.json**
+2. It is necessary to create a file **npm-lock.yaml** by `pnpm install --no-frozen-lockfile`
+
+**Bun**
+1. Need set resolutions w/ `"sharp": "0.32.6"` on **package.json**
+2. Set [ENV](https://developers.cloudflare.com/pages/configuration/language-support-and-tools/#supported-languages-and-tools) BUN_VERSION=1.0.5 (or higher) in Cloudflare. Cuz the default version of **Bun** - 1.0.1 doesn't work.
