@@ -1,4 +1,5 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, useVisibleTask$ } from "@builder.io/qwik";
+import { usePWA } from '@qwikdev/pwa/client'
 import type { DocumentHead } from "@builder.io/qwik-city";
 
 import Counter from "~/components/starter/counter/counter";
@@ -7,6 +8,12 @@ import Infobox from "~/components/starter/infobox/infobox";
 import Starter from "~/components/starter/next-steps/next-steps";
 
 export default component$(() => {
+  const pwa = usePWA()
+  useVisibleTask$(({ track }) => {
+    track(pwa.isPWAInstalled)
+    console.log(pwa)
+  })
+ 
   return (
     <>
       <Hero />

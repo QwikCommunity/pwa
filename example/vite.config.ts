@@ -3,6 +3,7 @@ import { qwikVite } from "@builder.io/qwik/optimizer";
 import { qwikCity } from "@builder.io/qwik-city/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { type PWAOptions, qwikPwa } from "@qwikdev/pwa";
+console.log(import.meta.resolve('@qwikdev/pwa'))
 
 const config: PWAOptions | undefined = process.env.CUSTOM_CONFIG === "true"
  ? { config: true }

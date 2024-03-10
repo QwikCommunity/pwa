@@ -1,18 +1,29 @@
+import { readFile } from "node:fs/promises";
 import type { QwikPWAContext } from "../context";
 import type { Plugin } from "vite";
+import path from "node:path";
 
-const VIRTUAL = "virtual:qwik-pwa/head";
-const RESOLVED_VIRTUAL = `\0${VIRTUAL}`;
+const VIRTUAL_HEAD = "virtual:qwik-pwa/head";
+const VIRTUAL_MANIFEST = "virtual:qwik-pwa/manifest"
+const RESOLVED_VIRTUAL_HEAD = `\0${VIRTUAL_HEAD}`;
+const RESOLVED_VIRTUAL_MANIFEST = `\0${VIRTUAL_MANIFEST}`;
 
 export default function AssetsPlugin(ctx: QwikPWAContext): Plugin {
   return {
     name: "qwik-pwa:assets",
     enforce: "post",
     resolveId(id) {
-      return id === VIRTUAL ? RESOLVED_VIRTUAL : undefined;
+      switch(id) {
+        case VIRTUAL_HEAD: 
+          return RESOLVED_VIRTUAL_HEAD 
+        case VIRTUAL_MANIFEST:
+          return RESOLVED_VIRTUAL_MANIFEST 
+        default: 
+          return undefined
+      }
     },
     async load(id) {
-      if (id === RESOLVED_VIRTUAL) {
+      if (id === RESOLVED_VIRTUAL_HEAD) {
         const assets = await ctx.assets;
         return (
           (await assets?.resolveHtmlLinks()) ??
@@ -20,6 +31,10 @@ export default function AssetsPlugin(ctx: QwikPWAContext): Plugin {
 export const meta = [];
 `
         );
+      }
+      if (id === RESOLVED_VIRTUAL_MANIFEST) {
+        const manifest = await readFile(path.join(ctx.publicDir, ctx.webManifestUrl), 'utf-8')
+        return `export default ${manifest}`
       }
     },
     buildStart() {
@@ -41,7 +56,7 @@ export const meta = [];
         // - invalidate resolved virtual module or
         // - send full page reload if resolved virtual module is not found
         const resolvedVirtual =
-          server.moduleGraph.getModuleById(RESOLVED_VIRTUAL);
+          server.moduleGraph.getModuleById(RESOLVED_VIRTUAL_HEAD);
         if (resolvedVirtual) {
           return [resolvedVirtual];
         }
