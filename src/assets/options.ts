@@ -17,6 +17,7 @@ export function resolveOptions(ctx: QwikPWAContext) {
     includeHtmlHeadLinks = true,
     includeThemeColor = true,
     includeWebManifest = false,
+    promptForUpdate = false,
   } = ctx.userOptions;
 
   ctx.options = {
@@ -30,5 +31,6 @@ export function resolveOptions(ctx: QwikPWAContext) {
     includeHtmlHeadLinks,
     includeThemeColor,
     includeWebManifest,
+    promptForUpdate,
   };
 }

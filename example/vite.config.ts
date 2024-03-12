@@ -4,12 +4,15 @@ import { qwikCity } from "@builder.io/qwik-city/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { type PWAOptions, qwikPwa } from "@qwikdev/pwa";
 
+const promptForUpdate = process.env.PROMPT === "true";
+
 const config: PWAOptions | undefined = process.env.CUSTOM_CONFIG === "true"
- ? { config: true }
-    : undefined;
+ ? { config: true, promptForUpdate }
+    : { config: false, promptForUpdate, preset: "minimal-2023" };
 
 export default defineConfig(() => {
   return {
+    mode: "development",
     define: {
       // enables debugging in workbox
       "process.env.NODE_ENV": JSON.stringify("development"),
