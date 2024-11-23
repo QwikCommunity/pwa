@@ -12,7 +12,9 @@ import {
   setDefaultHandler,
 } from "workbox-routing";
 
-export const assets = [...publicDirAssets, ...emittedAssets].filter((asset) => !excludeAssets.includes(asset));
+export const assets = [...publicDirAssets, ...emittedAssets].filter(
+  (asset) => !excludeAssets.includes(asset),
+);
 export { routes };
 
 function urlsToEntries(urls: string[], hash: string): PrecacheEntry[] {

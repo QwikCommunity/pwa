@@ -17,7 +17,7 @@ export default function SSRPlugin(ctx: QwikPWAContext): Plugin {
         const manifest = ctx.qwikPlugin.api.getManifest();
         const swCodeUpdate = `
         const manifestHash = ${JSON.stringify(manifest?.manifestHash)};
-        
+
         ${swCode}
         `;
         await fs.writeFile(ctx.swClientDistPath, swCodeUpdate);

@@ -22,6 +22,7 @@ export default function ClientPlugin(ctx: QwikPWAContext): Plugin {
         const assets = await ctx.assets;
         const generatedAssetsUrls = assets?.resolveSWPrecachingAssets() ?? [];
         const routes = ctx.qwikCityPlugin.api.getRoutes();
+        const excludeRoutes = ctx.userOptions.excludeRoutes ?? [];
         const swCode = await fs.readFile(ctx.swClientDistPath, "utf-8");
         const swCodeUpdate = `
         const excludeAssets = ['_headers', '_redirects']
@@ -32,6 +33,7 @@ export default function ClientPlugin(ctx: QwikPWAContext): Plugin {
           ...emittedAssets,
         ])};
         const routes = [${routes
+          .filter((route) => !excludeRoutes.includes(route.pathname))
           .map(
             (route) =>
               `{ pathname: ${JSON.stringify(
@@ -41,7 +43,7 @@ export default function ClientPlugin(ctx: QwikPWAContext): Plugin {
              }`,
           )
           .join(",\n")}];
-        
+
         ${swCode}
         `;
         await fs.writeFile(ctx.swClientDistPath, swCodeUpdate);

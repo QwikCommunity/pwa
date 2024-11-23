@@ -92,4 +92,8 @@ export interface PWAOptions {
    * @default false
    */
   includeWebManifest?: boolean;
+  /**
+   * The route pathnames should be excluded.
+   */
+  excludeRoutes?: string[];
 }
