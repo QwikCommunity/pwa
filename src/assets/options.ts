@@ -30,5 +30,6 @@ export function resolveOptions(ctx: QwikPWAContext) {
     includeHtmlHeadLinks,
     includeThemeColor,
     includeWebManifest,
+    excludeRoutes: [],
   };
 }
